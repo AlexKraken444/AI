@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#141614">
+  <meta name="description" content="Kraken — чат с собственной небольшой нейросетью на Python. Без внешних AI API, с открытым кодом и характером.">
+  <title>Kraken — пространство для диалога</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <button class="backdrop" id="backdrop" aria-label="Закрыть меню" hidden></button>
+    <aside class="sidebar" id="sidebar" aria-label="Навигация и история">
+      <a class="brand" href="/" aria-label="Kraken, главная"><img src="/favicon.svg" alt="" width="33" height="33"><span>kraken<span class="brand-dot">.</span></span><span class="lab">LAB</span></a>
+      <button class="new-chat" id="new-chat"><span>＋</span> Новый диалог <kbd>Ctrl K</kbd></button>
+      <div class="history-label">ВАШИ ДИАЛОГИ <span id="chat-count">0</span></div>
+      <nav id="history" class="history" aria-label="Сохранённые диалоги"></nav>
+      <div class="sidebar-bottom">
+        <div class="local-note"><span class="small-star">✳</span><div>Маленькая модель.<br><strong>Свой характер.</strong><p>Создана с нуля на Python</p></div></div>
+        <button class="about-button" id="about-button"><span>ⓘ</span> О модели <span class="arrow">↗</span></button>
+        <div class="profile"><div class="avatar">ВЫ</div><div>Личное пространство<span>История в этом браузере</span></div><span class="online-dot"></span></div>
+      </div>
+    </aside>
+    <main>
+      <header class="topbar">
+        <div class="topbar-left"><button id="menu-button" class="icon-button menu-button" aria-label="Открыть меню" aria-expanded="false">☰</button><button class="model-selector" id="model-button">Kraken <span>Mini 1.0</span><span class="chevron">⌄</span></button><span class="model-badge">СОБСТВЕННАЯ МОДЕЛЬ</span></div>
+        <a class="source-link" href="https://github.com/AlexKraken444/AI" target="_blank" rel="noopener noreferrer">Открытый код <span>↗</span></a>
+      </header>
+      <div class="scroll-area" id="scroll-area">
+        <section class="welcome" id="welcome">
+          <div class="eyebrow"><span></span> ВАШ СОБЕСЕДНИК НА PYTHON</div>
+          <div class="hero-mark" aria-hidden="true">✳</div>
+          <h1>Большие вопросы.<br><span>Маленькая нейросеть.</span></h1>
+          <p class="hero-description">Место для любопытства, кода и немного иронии.<br>Начнём с одной хорошей мысли?</p>
+          <div class="suggestions">
+            <button class="suggestion" data-prompt="Объясни, как работает нейросеть"><span class="suggestion-icon">✧</span><strong>Разобраться в сложном</strong><span>Как работает нейросеть?</span><i>↗</i></button>
+            <button class="suggestion" data-prompt="Покажи цикл на Python"><span class="suggestion-icon code-icon">&lt;/&gt;</span><strong>Написать первый код</strong><span>Цикл на Python без магии</span><i>↗</i></button>
+            <button class="suggestion" data-prompt="Составь план изучения Python"><span class="suggestion-icon">⌘</span><strong>С чего-нибудь начать</strong><span>План обучения на неделю</span><i>↗</i></button>
+            <button class="suggestion" data-prompt="Расскажи шутку"><span class="suggestion-icon">☺</span><strong>Добавить лёгкости</strong><span>Мне нужна хорошая шутка</span><i>↗</i></button>
+          </div>
+          <div class="welcome-note"><span>↳</span> Небольшая обученная модель. Знакомые темы, честные ответы.</div>
+        </section>
+        <section class="messages" id="messages" aria-label="Сообщения диалога" hidden></section>
+      </div>
+      <div class="composer-wrap">
+        <div class="composer-hint"><span class="status-dot"></span><span id="connection-status">Без внешних AI API</span><span class="hint-right">Можно просто начать с «Привет»</span></div>
+        <form id="chat-form" class="composer">
+          <label class="sr-only" for="prompt">Ваше сообщение</label>
+          <textarea id="prompt" placeholder="О чём поговорим?" rows="1" maxlength="4000" required></textarea>
+          <div class="composer-bottom"><button type="button" id="personality" class="personality" aria-pressed="true"><span>✳</span> С характером <span class="toggle"><span></span></span></button><div class="send-area"><span class="key-hint">Enter ↵</span><button type="submit" id="send-button" class="send-button" aria-label="Отправить сообщение" disabled>↑</button></div></div>
+        </form>
+        <p class="footnote">Kraken может ошибаться. Серый текст — статусы и комментарии, а не внутренние мысли.</p>
+      </div>
+    </main>
+  </div>
+  <dialog id="about-dialog">
+    <div class="dialog-top"><span class="dialog-eyebrow">ЗНАКОМЬТЕСЬ, KRAKEN MINI</span><button class="icon-button" id="close-about" aria-label="Закрыть">×</button></div>
+    <h2>Нейросеть с нуля.<br>Без притворства.</h2>
+    <p>В основе — собственная небольшая нейросеть на Python. Она распознаёт тему сообщения и выбирает подготовленный ответ. Это не генеративная модель уровня ChatGPT.</p>
+    <div class="model-stats"><div><strong>384 → 48</strong><span>Вход и скрытый слой</span></div><div><strong>18</strong><span>Знакомых тем</span></div><div><strong>0</strong><span>Внешних AI API</span></div></div>
+    <p>Доступны основы Python, нейросетей и API, план обучения, шутки и калькулятор. Контекст ограничен: модель может запомнить имя и повторить прошлый ответ.</p>
+    <p>Серые реплики — статусы и стилизованные комментарии. Переключатель характера добавляет мягкий сарказм. Инструкции для причинения вреда не входят в базу ответов.</p>
+    <p class="privacy-note">История сохраняется в вашем браузере. Последние сообщения передаются серверу для ответа; приложение не обучается на переписке.</p>
+    <a class="dialog-link" href="https://github.com/AlexKraken444/AI" target="_blank" rel="noopener noreferrer">Посмотреть код и обучение <span>↗</span></a>
+  </dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <div id="announcer" class="sr-only" aria-live="polite"></div>
+</body>
+</html>
