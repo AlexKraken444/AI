@@ -4,6 +4,7 @@ const storeKey = "kraken.chats.v1";
 const makeId = () => crypto.randomUUID();
 let chats = [], currentId = null, pending = null, toastTimer;
 let personality = true;
+let memory = KrakenMemory.blank(), modelMode = "context";
 
 function toast(text) {
   $("#toast").textContent = text;
@@ -20,17 +21,27 @@ function load() {
     chats = state.chats.slice(0, 50).filter(c => typeof c.id === "string" && typeof c.title === "string" && Array.isArray(c.messages)).map(c => ({
       id: c.id, title: c.title.slice(0, 80), messages: c.messages.slice(-200).filter(m => m && ["user", "assistant"].includes(m.role) && typeof m.content === "string").map(m => ({
         id: typeof m.id === "string" ? m.id : makeId(), role: m.role, content: m.content.slice(0, 12000),
-        statuses: Array.isArray(m.statuses) ? m.statuses.filter(s => typeof s === "string").slice(0, 5) : [],
+        statuses: Array.isArray(m.statuses) ? m.statuses.filter(s => typeof s === "string").slice(0, 8) : [],
+        sources: Array.isArray(m.sources) ? m.sources.filter(s => s && typeof s.text === "string" && typeof s.title === "string" && typeof s.chatId === "string").slice(0, 8) : [],
+        model: typeof m.model === "string" ? m.model : "Kraken Mini",
         state: m.state === "pending" ? "stopped" : m.state, error: typeof m.error === "string" ? m.error : ""
       }))
     }));
     currentId = chats.some(c => c.id === state.currentId) ? state.currentId : null;
     personality = state.personality !== false;
+    modelMode = state.modelMode === "reference" ? "reference" : "context";
+    memory = KrakenMemory.normalize(state.memory);
+    if (!state.memory) {
+      // One-time migration: recognize explicit user facts in already saved chats.
+      let order = 0;
+      for (const chat of [...chats].reverse()) for (const message of chat.messages) KrakenMemory.learn(memory, message, chat.id, order++);
+      save();
+    }
   } catch { toast("Не удалось прочитать историю. Можно начать новый диалог."); }
 }
 
 function save() {
-  try { localStorage.setItem(storeKey, JSON.stringify({chats, currentId, personality})); }
+  try { localStorage.setItem(storeKey, JSON.stringify({chats, currentId, personality, memory, modelMode})); }
   catch { toast("Браузер не смог сохранить историю. Текущий диалог остаётся доступен до закрытия страницы."); }
 }
 
@@ -62,9 +73,10 @@ function renderHistory() {
     const del = element("button", "history-delete", "×");
     del.setAttribute("aria-label", `Удалить диалог: ${chat.title}`);
     del.onclick = () => {
-      if (!confirm(`Удалить диалог «${chat.title}» из этого браузера?`)) return;
+      if (!confirm(`Удалить диалог «${chat.title}» и связанные с ним записи памяти из этого браузера?`)) return;
       if (pending?.chatId === chat.id) stop();
       chats = chats.filter(c => c.id !== chat.id);
+      KrakenMemory.removeChat(memory, chat.id);
       if (currentId === chat.id) currentId = null;
       save(); render();
     };
@@ -97,7 +109,7 @@ function renderMessage(message, chat) {
   if (message.role === "user") { article.append(element("div", "message-body", message.content)); return article; }
   const label = element("div", "message-label");
   const logo = element("img"); logo.src = "/favicon.svg"; logo.alt = "";
-  label.append(logo, document.createTextNode("Kraken"), element("span", "", "MINI")); article.append(label);
+  label.append(logo, document.createTextNode("Kraken"), element("span", "", message.model === "Kraken Mini" ? "MINI" : "CONTEXT 2")); article.append(label);
   const details = element("details", `processing${message.state === "pending" ? " pending" : ""}`);
   details.open = message.state === "pending";
   const summary = element("summary", "", message.state === "pending" ? "Обрабатываю запрос…" : "Обработка и комментарии");
@@ -105,6 +117,22 @@ function renderMessage(message, chat) {
   for (const status of message.statuses || []) details.append(element("p", "", status));
   if ((message.statuses || []).length || message.state === "pending") article.append(details);
   const body = element("div", "message-body"); renderText(body, message.content); article.append(body);
+  if (message.sources?.length) {
+    const sources = element("details", "memory-sources");
+    sources.append(element("summary", "", `◈ Использованная память · ${message.sources.length}`));
+    for (const source of message.sources) {
+      const item = element("div", "memory-source");
+      item.append(element("strong", "", source.title), element("p", "", source.text));
+      const sourceChat = chats.find(c => c.id === source.chatId);
+      if (sourceChat) {
+        const open = element("button", "", "Открыть диалог ↗");
+        open.onclick = () => { if (pending) stop(); currentId = sourceChat.id; save(); render(); };
+        item.append(open);
+      }
+      sources.append(item);
+    }
+    article.append(sources);
+  }
   if (message.state === "stopped") article.append(element("p", "message-error", "Ответ остановлен."));
   if (message.error) article.append(element("p", "message-error", message.error));
   const actions = element("div", "message-actions");
@@ -160,6 +188,10 @@ function updateControls() {
   button.classList.toggle("stop", Boolean(pending));
   button.setAttribute("aria-label", pending ? "Остановить ответ" : "Отправить сообщение");
   $("#personality").setAttribute("aria-pressed", String(personality));
+  $("#model-version").textContent = modelMode === "context" ? "Context 2" : "Mini 1";
+  $("#model-mode").value = modelMode;
+  $("#memory-count").textContent = memory.enabled ? memory.facts.length : "выкл.";
+  $("#memory-shortcut").textContent = memory.enabled ? `◈ Память · ${memory.facts.length}` : "◈ Память выключена";
   $("#connection-status").textContent = pending ? "Kraken обрабатывает запрос…" : "Без внешних AI API";
 }
 
@@ -173,18 +205,20 @@ function stop() {
 }
 
 async function requestReply(chat) {
-  const message = {id: makeId(), role: "assistant", content: "", statuses: [], state: "pending"};
+  const message = {id: makeId(), role: "assistant", content: "", statuses: [], sources: [], model: modelMode === "context" ? "Kraken Context 2" : "Kraken Mini", state: "pending"};
   const controller = new AbortController();
   const context = chat.messages.filter(m => m.content && (m.role === "user" || m.state === "done")).slice(-24).map(({role, content}) => ({role, content}));
   // Keep the serialized UTF-8 request comfortably below the API body limit.
-  while (context.length > 1 && new TextEncoder().encode(JSON.stringify(context)).length > 55000) context.shift();
+  const recalled = KrakenMemory.retrieve(memory, chats, chat.id, context.at(-1).content);
+  const payload = {messages: context, personality, memory: recalled, mode: modelMode};
+  while (context.length > 1 && new TextEncoder().encode(JSON.stringify(payload)).length > 60000) context.shift();
   const job = {controller, chatId: chat.id, chat, message};
   chat.messages.push(message); pending = job;
   render(); save();
   let timedOut = false, completed = false;
   const timer = setTimeout(() => { timedOut = true; controller.abort(); }, 30000);
   try {
-    const response = await fetch("/api/chat", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({messages: context, personality}), signal: controller.signal});
+    const response = await fetch("/api/chat", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(payload), signal: controller.signal});
     if (!response.ok) {
       let reason = "Сервер не смог обработать запрос.";
       try { reason = (await response.json()).error || reason; } catch {}
@@ -198,8 +232,9 @@ async function requestReply(chat) {
       const data = JSON.parse(line);
       if (data.type === "status" && typeof data.text === "string") message.statuses.push(data.text);
       if (data.type === "token" && typeof data.text === "string") message.content += data.text;
+      if (data.type === "sources" && Array.isArray(data.items)) message.sources = data.items;
       if (data.type === "error") throw new Error(data.text || "Ошибка модели.");
-      if (data.type === "done") { completed = true; message.state = "done"; }
+      if (data.type === "done") { completed = true; message.state = "done"; message.model = data.model; }
       updateMessage(chat, message);
     }
     while (true) {
@@ -233,7 +268,12 @@ function send(text) {
     chats.unshift(chat); currentId = chat.id;
   }
   if (chat.messages.length >= 200) { toast("В этом диалоге уже 100 пар сообщений. Начните новый."); return; }
-  chat.messages.push({id: makeId(), role: "user", content: text});
+  const userMessage = {id: makeId(), role: "user", content: text};
+  chat.messages.push(userMessage);
+  const learned = KrakenMemory.learn(memory, userMessage, chat.id);
+  if (learned.length) toast(`Сохранено в память: ${learned.map(f => f.text).join("; ")}`);
+  // The newest active conversation is also the most recent history source.
+  chats = [chat, ...chats.filter(c => c.id !== chat.id)];
   $("#prompt").value = ""; $("#prompt").style.height = "auto";
   requestReply(chat);
 }
@@ -251,7 +291,46 @@ $("#backdrop").onclick = () => setMenu(false);
 const about = $("#about-dialog");
 $("#about-button").onclick = $("#model-button").onclick = () => { setMenu(false); about.showModal(); };
 $("#close-about").onclick = () => about.close();
+$("#model-mode").onchange = event => { if (pending) stop(); modelMode = event.target.value; save(); updateControls(); };
 about.addEventListener("click", event => { if (event.target === about) { const r = about.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) about.close(); } });
 document.addEventListener("keydown", event => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") { event.preventDefault(); $("#new-chat").click(); } if (event.key === "Escape") setMenu(false); });
 window.matchMedia("(max-width: 760px)").addEventListener("change", () => setMenu(false));
+
+const memoryDialog = $("#memory-dialog");
+function renderMemory() {
+  $("#memory-toggle").textContent = memory.enabled ? "Память включена" : "Память выключена";
+  $("#memory-toggle").setAttribute("aria-pressed", String(memory.enabled));
+  const container = $("#memory-facts"); container.replaceChildren();
+  if (!memory.facts.length) container.append(element("p", "memory-empty", "Пока нет сохранённых фактов. Например: «Меня зовут Алекс. Я изучаю Python»."));
+  for (const fact of [...memory.facts].reverse()) {
+    const row = element("div", "memory-fact");
+    const content = element("div");
+    content.append(element("p", "", fact.text));
+    const source = chats.find(c => c.id === fact.chatId);
+    content.append(element("span", "", `Источник: ${source?.title || "удалённый диалог"}`));
+    const forget = element("button", "", "Забыть");
+    forget.setAttribute("aria-label", `Забыть: ${fact.text}`);
+    forget.onclick = () => { if (pending) stop(); KrakenMemory.forget(memory, fact.id, chats); save(); renderMemory(); updateControls(); toast("Запись удалена из памяти"); };
+    row.append(content, forget); container.append(row);
+  }
+  const history = $("#memory-chats"); history.replaceChildren();
+  if (!chats.length) history.append(element("p", "memory-empty", "Здесь появятся сохранённые диалоги."));
+  for (const chat of chats) {
+    const row = element("label", "memory-chat");
+    const checkbox = element("input"); checkbox.type = "checkbox"; checkbox.checked = !memory.blockedChats.includes(chat.id);
+    checkbox.onchange = () => {
+      if (pending) stop();
+      memory.blockedChats = checkbox.checked ? memory.blockedChats.filter(id => id !== chat.id) : [...memory.blockedChats, chat.id];
+      save(); toast(checkbox.checked ? "Диалог доступен памяти" : "Диалог исключён из памяти");
+    };
+    row.append(checkbox, element("span", "", chat.title)); history.append(row);
+  }
+}
+$("#memory-button").onclick = $("#memory-shortcut").onclick = () => { setMenu(false); renderMemory(); memoryDialog.showModal(); };
+$("#close-memory").onclick = () => memoryDialog.close();
+$("#memory-toggle").onclick = () => { if (pending) stop(); memory.enabled = !memory.enabled; save(); renderMemory(); updateControls(); };
+$("#clear-memory").onclick = () => {
+  if (!confirm("Забыть все факты и исключить существующие сообщения из поиска памяти? Сами чаты останутся в истории.")) return;
+  if (pending) stop(); KrakenMemory.clear(memory, chats); save(); renderMemory(); updateControls(); toast("Память очищена");
+};
 load(); render(); setMenu(false);

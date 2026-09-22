@@ -1,1 +1,2 @@
-# Runtime uses only the Python standard library.
+# Only numerical inference runs on Vercel; PyTorch is not a runtime dependency.
+numpy>=1.26,<3

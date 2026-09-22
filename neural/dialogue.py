@@ -1,0 +1,80 @@
+"""Request pipeline: grounded tools/memory + autoregressive text generation."""
+from functools import lru_cache
+import re
+from neural.assistant import prepare_reply
+from neural.memory import memory_reply, memory_context
+
+
+@lru_cache(maxsize=1)
+def language_model():
+    from neural.transformer import Transformer
+    return Transformer()
+
+
+def source_event(sources):
+    return {"type": "sources", "items": [
+        {"id": item["id"], "chatId": item["chatId"], "title": item.get("title", "Сохранённый факт"), "text": item["text"]}
+        for item in sources
+    ]}
+
+
+def text_events(answer, route, model="Kraken Context 2"):
+    for offset in range(0, len(answer), 48):
+        yield {"type": "token", "text": answer[offset:offset + 48]}
+    yield {"type": "done", "model": model, "route": route, "finish_reason": "end"}
+
+
+def reply_events(messages, personality, memory, mode="context"):
+    text = messages[-1]["content"].strip()
+    yield {"type": "status", "text": "Проверяю доступный контекст и сохранённую память."}
+    recalled = memory_reply(text, memory)
+    if recalled:
+        answer, sources = recalled
+        yield {"type": "status", "text": f"Нашёл записей в памяти: {len(sources)}. Сверяю ответ с источниками."}
+        yield source_event(sources)
+        yield from text_events(answer, "memory")
+        return
+    if re.match(r"^запомни\s*[:—-]?\s+", text, re.I):
+        if not memory["enabled"]:
+            answer = "Память выключена. Включи её в разделе «Память», чтобы сохранять факты между чатами."
+        elif not memory.get("saved"):
+            answer = "Не вижу сохранённой записи. Проверь раздел «Память»; пароли и ключи автоматически не сохраняются."
+        else:
+            answer = "Запись сохранена в памяти этого браузера. Её можно проверить или удалить в разделе «Память»."
+            yield source_event(memory["saved"])
+        yield from text_events(answer, "memory_saved")
+        return
+    if memory.get("saved"):
+        saved = memory["saved"]
+        yield source_event(saved)
+        yield from text_events("Запомнил в этом браузере:\n\n" + "\n".join("• " + item["text"] for item in saved) + "\n\nИспользую эти факты в следующих чатах, пока память включена.", "memory_saved")
+        return
+    # Keep exact arithmetic, explicit safety replies and simple context handling deterministic.
+    legacy, aside, route = prepare_reply(messages, personality)
+    if route in {"calculator", "safety", "context"} or mode == "reference":
+        yield {"type": "status", "text": aside}
+        yield from text_events(legacy, route, "Kraken Mini" if mode == "reference" else "Kraken Context 2")
+        return
+    model = language_model()
+    context, sources = memory_context(memory, model.tokenizer, messages)
+    if sources:
+        yield source_event(sources)
+        yield {"type": "status", "text": f"Добавляю в контекст {len(sources)} записей из памяти."}
+    yield {"type": "status", "text": "Transformer учитывает порядок токенов и связи между ними в доступном контексте."}
+    if personality and route not in {"support", "unknown"}:
+        yield {"type": "status", "text": "Собираю ответ по токенам. На этот раз без карточки с готовой репликой."}
+    else:
+        yield {"type": "status", "text": "Последовательно предсказываю токены ответа."}
+    metadata, has_text = {}, False
+    for event in model.generate_events(messages, context):
+        if event["type"] == "token":
+            has_text = has_text or bool(event["text"].strip())
+            yield event
+        else:
+            metadata = event
+    if not has_text:
+        yield {"type": "token", "text": "Не удалось сформировать ответ. Попробуй уточнить вопрос или переключиться на справочный режим Mini."}
+    if metadata.get("finish_reason") != "end":
+        yield {"type": "status", "text": "Достигнут лимит генерации. Ответ может быть неполным."}
+    yield {"type": "done", "model": "Kraken Context 2", "route": "transformer", "finish_reason": metadata.get("finish_reason", "end"),
+           "tokens": metadata.get("tokens", 0), "context_tokens": metadata.get("context_tokens", 0)}

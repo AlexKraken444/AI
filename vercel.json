@@ -6,7 +6,8 @@
   "functions": {
     "api/chat.py": {
       "maxDuration": 30,
-      "includeFiles": "neural/**"
+      "includeFiles": "neural/**",
+      "excludeFiles": "{.training-libs/**,training-output/**,training/**,tests/**,train.py,train_transformer.py}"
     }
   },
   "headers": [{

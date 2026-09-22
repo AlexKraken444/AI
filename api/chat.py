@@ -5,7 +5,9 @@ from http.server import BaseHTTPRequestHandler
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from neural.assistant import prepare_reply, validate
+from neural.assistant import validate
+from neural.memory import validate_memory
+from neural.dialogue import reply_events
 
 
 class handler(BaseHTTPRequestHandler):
@@ -19,7 +21,7 @@ class handler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def do_GET(self):
-        self.json_response(200, {"ok": True, "model": "Kraken Mini", "type": "neural intent classifier", "external_ai": False})
+        self.json_response(200, {"ok": True, "model": "Kraken Context 2", "type": "causal transformer", "external_ai": False, "memory": "browser-owned per-request context"})
 
     def do_POST(self):
         if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
@@ -32,6 +34,10 @@ class handler(BaseHTTPRequestHandler):
                 return
             payload = json.loads(self.rfile.read(size).decode("utf-8"))
             messages, personality = validate(payload)
+            memory = validate_memory(payload.get("memory"))
+            mode = payload.get("mode", "context")
+            if mode not in ("context", "reference"):
+                raise ValueError("Unknown model mode")
         except (ValueError, UnicodeDecodeError):
             self.json_response(400, {"error": "Некорректный запрос: до 24 сообщений, каждое от 1 до 4000 символов."})
             return
@@ -46,12 +52,8 @@ class handler(BaseHTTPRequestHandler):
             self.wfile.flush()
 
         try:
-            emit("status", text="Сообщение получено. Определяю тип запроса…")
-            answer, aside, route = prepare_reply(messages, personality)
-            emit("status", text=aside)
-            for start in range(0, len(answer), 48):
-                emit("token", text=answer[start:start + 48])
-            emit("done", model="Kraken Mini", route=route)
+            for event in reply_events(messages, personality, memory, mode):
+                emit(event["type"], **{key: value for key, value in event.items() if key != "type"})
         except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
             return
         except Exception:

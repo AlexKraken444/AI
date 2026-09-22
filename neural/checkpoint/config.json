@@ -1,0 +1,10 @@
+{
+  "version": "kraken-context-2",
+  "width": 128,
+  "heads": 4,
+  "layers": 3,
+  "context": 384,
+  "vocabulary": 922,
+  "seed": 42,
+  "parameters": 781568
+}

@@ -1,0 +1,9 @@
+{
+  "steps": 2400,
+  "training_examples": 11087,
+  "validation_examples": 1268,
+  "validation_token_loss": 1.1784864150826166,
+  "elapsed_seconds": 113.99,
+  "parameters": 781568,
+  "note": "Small original/synthetic corpus; this is not a general reasoning benchmark."
+}

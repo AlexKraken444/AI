@@ -1,0 +1,25 @@
+.memory-shortcut { margin-left:auto; background:transparent; color:#bfd6a6; font-size:10px; padding:3px 5px; border-radius:4px; }
+.memory-button { padding-bottom:0; }
+.memory-facts { margin:20px 0; max-height:260px; overflow:auto; }
+.memory-fact { display:flex; align-items:center; gap:12px; border-bottom:1px solid #36442d; padding:12px 0; }
+.memory-fact>div { flex:1; min-width:0; }
+.memory-fact p { margin:0; color:#e5eedc; overflow-wrap:anywhere; }
+.memory-fact span { display:block; margin-top:4px; font-size:9px; color:#849573; overflow-wrap:anywhere; }
+.memory-fact button,.memory-source button { background:#2c3823; padding:7px 9px; border-radius:5px; font-size:10px; color:#c2d9a9; flex-shrink:0; }
+.memory-toggle { width:100%; background:#31452a; border:1px solid #698c50; border-radius:8px; padding:11px; color:#d2eeab; }
+.memory-toggle[aria-pressed=false] { background:#292e26; border-color:#49523f; color:#96a18d; }
+.memory-empty { font-size:11px; }
+.memory-history-title { color:#b1c59e; font-size:12px; font-weight:500; }
+.memory-chats { max-height:130px; overflow:auto; }
+.memory-chat { display:flex; align-items:center; gap:8px; padding:7px 0; font-size:11px; color:#a4b394; }
+.memory-chat span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.memory-chat input { accent-color:#b8d892; }
+.clear-memory { width:100%; background:transparent; color:#d4b59b; border:1px solid #6a5340; padding:11px; border-radius:8px; font-size:11px; }
+.mode-label { font-size:11px; color:#adbd9d; display:block; margin-bottom:8px; }
+#model-mode { width:100%; border:1px solid #526843; border-radius:7px; padding:11px; background:#232e1c; color:#d9e8ca; font:12px var(--font); }
+.memory-sources { margin:14px 0 12px 34px; border:1px solid #35432c; border-radius:8px; padding:10px 13px; font-size:11px; color:#a2b78e; }
+.memory-sources summary { cursor:pointer; }
+.memory-source { padding:12px 0 3px; border-top:1px solid #35432c; margin-top:10px; }
+.memory-source strong { font-size:10px; font-weight:500; color:#9dab90; }
+.memory-source p { color:#b7c1ac; font-size:11px; line-height:1.7; white-space:pre-wrap; overflow-wrap:anywhere; }
+@media(max-width:760px) { .memory-sources { margin-left:0; } .model-selector { font-size:14px; } }

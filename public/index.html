@@ -8,6 +8,8 @@
   <title>Kraken — пространство для диалога</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/memory.css">
+  <script src="/memory.js" defer></script>
   <script src="/app.js" defer></script>
 </head>
 <body>
@@ -20,20 +22,21 @@
       <nav id="history" class="history" aria-label="Сохранённые диалоги"></nav>
       <div class="sidebar-bottom">
         <div class="local-note"><span class="small-star">✳</span><div>Маленькая модель.<br><strong>Свой характер.</strong><p>Создана с нуля на Python</p></div></div>
+        <button class="about-button memory-button" id="memory-button"><span>◈</span> Память <span id="memory-count" class="arrow">0</span></button>
         <button class="about-button" id="about-button"><span>ⓘ</span> О модели <span class="arrow">↗</span></button>
         <div class="profile"><div class="avatar">ВЫ</div><div>Личное пространство<span>История в этом браузере</span></div><span class="online-dot"></span></div>
       </div>
     </aside>
     <main>
       <header class="topbar">
-        <div class="topbar-left"><button id="menu-button" class="icon-button menu-button" aria-label="Открыть меню" aria-expanded="false">☰</button><button class="model-selector" id="model-button">Kraken <span>Mini 1.0</span><span class="chevron">⌄</span></button><span class="model-badge">СОБСТВЕННАЯ МОДЕЛЬ</span></div>
+        <div class="topbar-left"><button id="menu-button" class="icon-button menu-button" aria-label="Открыть меню" aria-expanded="false">☰</button><button class="model-selector" id="model-button">Kraken <span id="model-version">Context 2</span><span class="chevron">⌄</span></button><span class="model-badge">СОБСТВЕННЫЙ TRANSFORMER</span></div>
         <a class="source-link" href="https://github.com/AlexKraken444/AI" target="_blank" rel="noopener noreferrer">Открытый код <span>↗</span></a>
       </header>
       <div class="scroll-area" id="scroll-area">
         <section class="welcome" id="welcome">
           <div class="eyebrow"><span></span> ВАШ СОБЕСЕДНИК НА PYTHON</div>
           <div class="hero-mark" aria-hidden="true">✳</div>
-          <h1>Большие вопросы.<br><span>Маленькая нейросеть.</span></h1>
+          <h1>Продолжим разговор.<br><span>Теперь с памятью.</span></h1>
           <p class="hero-description">Место для любопытства, кода и немного иронии.<br>Начнём с одной хорошей мысли?</p>
           <div class="suggestions">
             <button class="suggestion" data-prompt="Объясни, как работает нейросеть"><span class="suggestion-icon">✧</span><strong>Разобраться в сложном</strong><span>Как работает нейросеть?</span><i>↗</i></button>
@@ -41,12 +44,12 @@
             <button class="suggestion" data-prompt="Составь план изучения Python"><span class="suggestion-icon">⌘</span><strong>С чего-нибудь начать</strong><span>План обучения на неделю</span><i>↗</i></button>
             <button class="suggestion" data-prompt="Расскажи шутку"><span class="suggestion-icon">☺</span><strong>Добавить лёгкости</strong><span>Мне нужна хорошая шутка</span><i>↗</i></button>
           </div>
-          <div class="welcome-note"><span>↳</span> Небольшая обученная модель. Знакомые темы, честные ответы.</div>
+          <div class="welcome-note"><span>↳</span> Context 2 — экспериментальная генеративная модель. Может путать факты.</div>
         </section>
         <section class="messages" id="messages" aria-label="Сообщения диалога" hidden></section>
       </div>
       <div class="composer-wrap">
-        <div class="composer-hint"><span class="status-dot"></span><span id="connection-status">Без внешних AI API</span><span class="hint-right">Можно просто начать с «Привет»</span></div>
+        <div class="composer-hint"><span class="status-dot"></span><span id="connection-status">Без внешних AI API</span><button id="memory-shortcut" type="button" class="memory-shortcut">◈ Память включена</button></div>
         <form id="chat-form" class="composer">
           <label class="sr-only" for="prompt">Ваше сообщение</label>
           <textarea id="prompt" placeholder="О чём поговорим?" rows="1" maxlength="4000" required></textarea>
@@ -57,14 +60,27 @@
     </main>
   </div>
   <dialog id="about-dialog">
-    <div class="dialog-top"><span class="dialog-eyebrow">ЗНАКОМЬТЕСЬ, KRAKEN MINI</span><button class="icon-button" id="close-about" aria-label="Закрыть">×</button></div>
+    <div class="dialog-top"><span class="dialog-eyebrow">KRAKEN CONTEXT 2</span><button class="icon-button" id="close-about" aria-label="Закрыть">×</button></div>
     <h2>Нейросеть с нуля.<br>Без притворства.</h2>
-    <p>В основе — собственная небольшая нейросеть на Python. Она распознаёт тему сообщения и выбирает подготовленный ответ. Это не генеративная модель уровня ChatGPT.</p>
-    <div class="model-stats"><div><strong>384 → 48</strong><span>Вход и скрытый слой</span></div><div><strong>18</strong><span>Знакомых тем</span></div><div><strong>0</strong><span>Внешних AI API</span></div></div>
-    <p>Доступны основы Python, нейросетей и API, план обучения, шутки и калькулятор. Контекст ограничен: модель может запомнить имя и повторить прошлый ответ.</p>
-    <p>Серые реплики — статусы и стилизованные комментарии. Переключатель характера добавляет мягкий сарказм. Инструкции для причинения вреда не входят в базу ответов.</p>
-    <p class="privacy-note">История сохраняется в вашем браузере. Последние сообщения передаются серверу для ответа; приложение не обучается на переписке.</p>
+    <p>Context 2 — собственный Transformer, обученный с нуля. Внимание учитывает порядок и связи между токенами; ответ создаётся последовательно, а не выбирается из списка.</p>
+    <div class="model-stats"><div><strong>3 × 4</strong><span>Слои × головы внимания</span></div><div><strong>384</strong><span>Токена контекста и ответа</span></div><div><strong>0</strong><span>Внешних AI API</span></div></div>
+    <label class="mode-label" for="model-mode">Режим ответа</label>
+    <select id="model-mode"><option value="context">Context 2 — генерация (эксперимент)</option><option value="reference">Mini 1 — справочные ответы</option></select>
+    <p>Модель обучена на небольшом авторском корпусе. Может ошибаться, смешивать факты и терять часть длинного контекста. Это не уровень ChatGPT. Mini оставлен как справочный режим с подготовленными ответами.</p>
+    <p>Память находит полезные факты и сообщения из прошлых чатов. Точное извлечение фактов из памяти и калькулятор работают отдельными программными обработчиками. Серые реплики показывают этапы работы, а не скрытые мысли.</p>
+    <p class="privacy-note">История и память хранятся в этом браузере. Выбранные фрагменты передаются серверу для ответа; веса модели на переписке не обновляются. Синхронизации между устройствами нет.</p>
     <a class="dialog-link" href="https://github.com/AlexKraken444/AI" target="_blank" rel="noopener noreferrer">Посмотреть код и обучение <span>↗</span></a>
+  </dialog>
+  <dialog id="memory-dialog">
+    <div class="dialog-top"><span class="dialog-eyebrow">ПАМЯТЬ МЕЖДУ ДИАЛОГАМИ</span><button class="icon-button" id="close-memory" aria-label="Закрыть память">×</button></div>
+    <h2>Чтобы не начинать<br>знакомство заново.</h2>
+    <p>Сохраняю явно названные факты: имя, интересы, обучение, проект и цель. Для своей записи напиши «Запомни: …». Также нахожу связанные сообщения в сохранённых чатах.</p>
+    <button id="memory-toggle" class="memory-toggle" aria-pressed="true">Память включена</button>
+    <div id="memory-facts" class="memory-facts" aria-label="Сохранённые факты"></div>
+    <h3 class="memory-history-title">Источники из истории</h3>
+    <div id="memory-chats" class="memory-chats"></div>
+    <p class="privacy-note">Память относится только к этому браузеру. «Забыть всё» исключает существующие сообщения из поиска памяти, сохраняя сами чаты. Сообщения текущего диалога по-прежнему доступны как его контекст.</p>
+    <button id="clear-memory" class="clear-memory">Забыть всё из прошлых чатов</button>
   </dialog>
   <div id="toast" class="toast" role="status" hidden></div>
   <div id="announcer" class="sr-only" aria-live="polite"></div>
