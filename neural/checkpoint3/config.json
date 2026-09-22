@@ -1,0 +1,11 @@
+{
+  "version": "kraken-context-3",
+  "width": 160,
+  "heads": 4,
+  "layers": 3,
+  "context": 512,
+  "vocabulary": 3072,
+  "seed": 43,
+  "tokenizer": "bpe",
+  "parameters": 1839040
+}

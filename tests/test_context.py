@@ -52,6 +52,16 @@ class TransformerTests(unittest.TestCase):
         self.assertTrue(any(e["type"] == "token" for e in events))
         self.assertLessEqual(events[-1]["tokens"],50)
 
+    def test_new_model_is_an_explicit_separate_mode(self):
+        from neural.dialogue import language_model
+        baseline=language_model("context")
+        candidate=language_model("context3")
+        self.assertNotEqual(baseline.config["version"],candidate.config["version"])
+        self.assertEqual(candidate.config["context"],512)
+        events=list(reply_events([{"role":"user","content":"Привет!"}],False,validate_memory(None),"context3"))
+        self.assertEqual(events[-1]["type"],"done")
+        self.assertEqual(events[-1]["model"],"Kraken Context 3")
+
 
 class MemoryTests(unittest.TestCase):
     def sample(self):

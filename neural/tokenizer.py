@@ -1,6 +1,7 @@
 """A small reversible word/character tokenizer, fitted only on our corpus."""
 import json
 import re
+import heapq
 from collections import Counter
 from pathlib import Path
 
@@ -13,9 +14,60 @@ def pieces(text):
 
 
 class Tokenizer:
-    def __init__(self, tokens):
+    def __init__(self, tokens, merges=None):
         self.tokens = tokens
         self.ids = {token: i for i, token in enumerate(tokens)}
+        self.merges = merges
+        self.ranks = {tuple(pair):i for i,pair in enumerate(merges or [])}
+        self.cache = {}
+
+    @classmethod
+    def fit_bpe(cls, texts, vocabulary=3072):
+        """Train character BPE with incremental weighted pair counts from scratch."""
+        counts=Counter(piece for text in texts for piece in pieces(text))
+        chars=sorted(set("".join(counts)) | set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?:;-_()\n"))
+        tokens=SPECIAL+chars
+        sequences=[list(word) for word in counts]
+        frequencies=list(counts.values())
+        pair_counts=Counter()
+        locations={}
+        for i,seq in enumerate(sequences):
+            for pair,count in Counter(zip(seq,seq[1:])).items():
+                pair_counts[pair]+=count*frequencies[i]
+                locations.setdefault(pair,set()).add(i)
+        heap=[(-count,pair) for pair,count in pair_counts.items()]
+        heapq.heapify(heap)
+        merges=[]
+        existing=set(tokens)
+        while heap and len(tokens)<vocabulary:
+            negative,pair=heapq.heappop(heap)
+            if -negative!=pair_counts[pair] or pair_counts[pair]<2:
+                continue
+            merged="".join(pair)
+            merges.append(list(pair))
+            if merged not in existing:
+                tokens.append(merged); existing.add(merged)
+            changed=set()
+            for i in list(locations.get(pair,())):
+                old=sequences[i]
+                before=Counter(zip(old,old[1:]))
+                new=[]; j=0
+                while j<len(old):
+                    if j+1<len(old) and (old[j],old[j+1])==pair:
+                        new.append(merged); j+=2
+                    else:
+                        new.append(old[j]); j+=1
+                after=Counter(zip(new,new[1:]))
+                for key in before.keys()|after.keys():
+                    difference=after[key]-before[key]
+                    if difference:
+                        pair_counts[key]+=difference*frequencies[i]; changed.add(key)
+                    if after[key]: locations.setdefault(key,set()).add(i)
+                    else: locations.get(key,set()).discard(i)
+                sequences[i]=new
+            for key in changed:
+                if pair_counts[key]>1: heapq.heappush(heap,(-pair_counts[key],key))
+        return cls(tokens,merges)
 
     @classmethod
     def fit(cls, texts, vocabulary=1800):
@@ -33,6 +85,20 @@ class Tokenizer:
     def encode(self, text):
         result = []
         for piece in pieces(text):
+            if self.merges is not None:
+                cached=self.cache.get(piece)
+                if cached is None:
+                    parts=list(piece)
+                    while len(parts)>1:
+                        pairs=[(self.ranks.get((parts[i],parts[i+1]),float("inf")),i) for i in range(len(parts)-1)]
+                        rank,index=min(pairs)
+                        if rank==float("inf"): break
+                        parts[index:index+2]=[parts[index]+parts[index+1]]
+                    cached=[self.ids.get(part,UNKNOWN) for part in parts]
+                    # Cache only public vocabulary entries, never arbitrary user words.
+                    if piece in self.ids and len(self.cache)<30000: self.cache[piece]=cached
+                result.extend(cached)
+                continue
             if piece in self.ids:
                 result.append(self.ids[piece])
             else:
@@ -43,11 +109,13 @@ class Tokenizer:
         return "".join(self.tokens[i] if i >= len(SPECIAL) else "�" if i == UNKNOWN else "" for i in ids)
 
     def save(self, path):
-        Path(path).write_text(json.dumps(self.tokens, ensure_ascii=False), encoding="utf-8")
+        data=self.tokens if self.merges is None else {"type":"bpe","tokens":self.tokens,"merges":self.merges}
+        Path(path).write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
 
     @classmethod
     def load(cls, path):
-        return cls(json.loads(Path(path).read_text(encoding="utf-8")))
+        data=json.loads(Path(path).read_text(encoding="utf-8"))
+        return cls(data["tokens"],data["merges"]) if isinstance(data,dict) else cls(data)
 
 
 def prompt_tokens(tokenizer, messages, memory="", limit=224):

@@ -1,0 +1,72 @@
+{
+  "baseline": {
+    "config": {
+      "version": "kraken-context-2",
+      "width": 128,
+      "heads": 4,
+      "layers": 3,
+      "context": 384,
+      "vocabulary": 922,
+      "seed": 42,
+      "parameters": 781568
+    },
+    "synthetic": {
+      "binding": {
+        "correct": 19,
+        "count": 60,
+        "accuracy": 0.31666666666666665
+      },
+      "correction": {
+        "correct": 0,
+        "count": 60,
+        "accuracy": 0.0
+      },
+      "missing_fact": {
+        "correct": 0,
+        "count": 12,
+        "accuracy": 0.0
+      }
+    },
+    "synthetic_macro_accuracy": 0.10555555555555556,
+    "dialogue_nll_per_utf8_byte": 5.650245095388895,
+    "dialogue_scored_bytes": 8038,
+    "generation_seconds_median": 0.014999999999417923,
+    "generation_seconds_p95": 0.031000000002677552
+  },
+  "candidate": {
+    "config": {
+      "version": "kraken-context-3",
+      "width": 160,
+      "heads": 4,
+      "layers": 3,
+      "context": 512,
+      "vocabulary": 3072,
+      "seed": 43,
+      "tokenizer": "bpe",
+      "parameters": 1839040
+    },
+    "synthetic": {
+      "binding": {
+        "correct": 25,
+        "count": 60,
+        "accuracy": 0.4166666666666667
+      },
+      "correction": {
+        "correct": 31,
+        "count": 60,
+        "accuracy": 0.5166666666666667
+      },
+      "missing_fact": {
+        "correct": 11,
+        "count": 12,
+        "accuracy": 0.9166666666666666
+      }
+    },
+    "synthetic_macro_accuracy": 0.6166666666666667,
+    "dialogue_nll_per_utf8_byte": 1.426128390419853,
+    "dialogue_scored_bytes": 8038,
+    "generation_seconds_median": 0.007499999999708962,
+    "generation_seconds_p95": 0.062000000005355105
+  },
+  "deployment_decision": "Candidate is opt-in. Free-form dialogue remains unreliable; keep Context 2 as default."
+}

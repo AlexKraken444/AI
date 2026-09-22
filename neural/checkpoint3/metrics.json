@@ -1,0 +1,124 @@
+{
+  "steps": 3200,
+  "selected_step": 400,
+  "seed": 43,
+  "parameters": 1839040,
+  "training_examples": 17880,
+  "validation_examples": 971,
+  "training_by_source": {
+    "authored-v2": 11060,
+    "authored-context-v3": 6580,
+    "OpenAssistant/oasst1": 240
+  },
+  "rejected_long_answers_train": {
+    "OpenAssistant/oasst1": 272
+  },
+  "rejected_long_answers_validation": {
+    "OpenAssistant/oasst1": 11
+  },
+  "validation_macro_example_loss": 1.6599514101872543,
+  "validation_by_category": {
+    "legacy": 0.8248082281863462,
+    "binding": 0.4171496732603936,
+    "correction": 0.4541207234064738,
+    "missing_fact": 0.1635279392875317,
+    "dialogue": 6.440150486795526
+  },
+  "selection_history": [
+    {
+      "step": 400,
+      "score": 1.6664223392703708,
+      "groups": {
+        "binding": 0.40579479982455574,
+        "correction": 0.44540828838944435,
+        "dialogue": 6.440150511892218,
+        "legacy": 0.8772301569581031,
+        "missing_fact": 0.1635279392875317
+      }
+    },
+    {
+      "step": 800,
+      "score": 1.6969915774783355,
+      "groups": {
+        "binding": 0.3115062743425369,
+        "correction": 0.004976390705754359,
+        "dialogue": 7.581263592368678,
+        "legacy": 0.5826869098469615,
+        "missing_fact": 0.004524720127746049
+      }
+    },
+    {
+      "step": 1200,
+      "score": 1.9084456527366254,
+      "groups": {
+        "binding": 0.2422980135306716,
+        "correction": 0.002393350515437002,
+        "dialogue": 8.625257542258815,
+        "legacy": 0.6552659001511832,
+        "missing_fact": 0.017013457227019697
+      }
+    },
+    {
+      "step": 1600,
+      "score": 2.0089525180487833,
+      "groups": {
+        "binding": 0.22489580512046814,
+        "correction": 0.0009595930285286158,
+        "dialogue": 9.198763546190763,
+        "legacy": 0.6128046401155491,
+        "missing_fact": 0.007339005788607109
+      }
+    },
+    {
+      "step": 2000,
+      "score": 2.02281652238655,
+      "groups": {
+        "binding": 0.19510400540505846,
+        "correction": 0.0007621986311278306,
+        "dialogue": 9.454900340030068,
+        "legacy": 0.462258767336607,
+        "missing_fact": 0.0010573005298889864
+      }
+    },
+    {
+      "step": 2400,
+      "score": 2.045227310148015,
+      "groups": {
+        "binding": 0.21375259022849302,
+        "correction": 0.000612472154898569,
+        "dialogue": 9.571277417634663,
+        "legacy": 0.4398131602133314,
+        "missing_fact": 0.0006809105086884099
+      }
+    },
+    {
+      "step": 2800,
+      "score": 2.066990676806715,
+      "groups": {
+        "binding": 0.20224051902381082,
+        "correction": 0.00048453702135399604,
+        "dialogue": 9.709447609750848,
+        "legacy": 0.4220845316614335,
+        "missing_fact": 0.0006961865761291443
+      }
+    },
+    {
+      "step": 3200,
+      "score": 2.0725226987580907,
+      "groups": {
+        "binding": 0.22912151633451383,
+        "correction": 0.0004336841894352498,
+        "dialogue": 9.724086309734144,
+        "legacy": 0.40844921053697664,
+        "missing_fact": 0.0005227729953831942
+      }
+    }
+  ],
+  "elapsed_seconds": 358.16,
+  "dataset_hashes": {
+    "train": "68ab3d1fff9c634c2e8ececb21ff24cdefb84d27a08ee682355aaceffc806a09",
+    "validation": "3855d5b10d67d6f04c020ecd7c7e66319901e63cc191a5f02015711a1f56d390",
+    "test": "5c14db6de9332e4044fa913f39085b8fa388bf1e152302eae3ea91c66984199b"
+  },
+  "note": "Small dataset; losses are not accuracy. Test set was not used in training or checkpoint selection."
+}

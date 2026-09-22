@@ -1,14 +1,15 @@
 """Request pipeline: grounded tools/memory + autoregressive text generation."""
 from functools import lru_cache
+from pathlib import Path
 import re
 from neural.assistant import prepare_reply
 from neural.memory import memory_reply, memory_context
 
 
-@lru_cache(maxsize=1)
-def language_model():
+@lru_cache(maxsize=2)
+def language_model(mode="context"):
     from neural.transformer import Transformer
-    return Transformer()
+    return Transformer(Path(__file__).parent / "checkpoint3") if mode == "context3" else Transformer()
 
 
 def source_event(sources):
@@ -26,13 +27,14 @@ def text_events(answer, route, model="Kraken Context 2"):
 
 def reply_events(messages, personality, memory, mode="context"):
     text = messages[-1]["content"].strip()
+    model_name = "Kraken Context 3" if mode == "context3" else "Kraken Mini" if mode == "reference" else "Kraken Context 2"
     yield {"type": "status", "text": "Проверяю доступный контекст и сохранённую память."}
     recalled = memory_reply(text, memory)
     if recalled:
         answer, sources = recalled
         yield {"type": "status", "text": f"Нашёл записей в памяти: {len(sources)}. Сверяю ответ с источниками."}
         yield source_event(sources)
-        yield from text_events(answer, "memory")
+        yield from text_events(answer, "memory", model_name)
         return
     if re.match(r"^запомни\s*[:—-]?\s+", text, re.I):
         if not memory["enabled"]:
@@ -42,20 +44,20 @@ def reply_events(messages, personality, memory, mode="context"):
         else:
             answer = "Запись сохранена в памяти этого браузера. Её можно проверить или удалить в разделе «Память»."
             yield source_event(memory["saved"])
-        yield from text_events(answer, "memory_saved")
+        yield from text_events(answer, "memory_saved", model_name)
         return
     if memory.get("saved"):
         saved = memory["saved"]
         yield source_event(saved)
-        yield from text_events("Запомнил в этом браузере:\n\n" + "\n".join("• " + item["text"] for item in saved) + "\n\nИспользую эти факты в следующих чатах, пока память включена.", "memory_saved")
+        yield from text_events("Запомнил в этом браузере:\n\n" + "\n".join("• " + item["text"] for item in saved) + "\n\nИспользую эти факты в следующих чатах, пока память включена.", "memory_saved", model_name)
         return
     # Keep exact arithmetic, explicit safety replies and simple context handling deterministic.
     legacy, aside, route = prepare_reply(messages, personality)
     if route in {"calculator", "safety", "context"} or mode == "reference":
         yield {"type": "status", "text": aside}
-        yield from text_events(legacy, route, "Kraken Mini" if mode == "reference" else "Kraken Context 2")
+        yield from text_events(legacy, route, model_name)
         return
-    model = language_model()
+    model = language_model(mode)
     context, sources = memory_context(memory, model.tokenizer, messages)
     if sources:
         yield source_event(sources)
@@ -76,5 +78,5 @@ def reply_events(messages, personality, memory, mode="context"):
         yield {"type": "token", "text": "Не удалось сформировать ответ. Попробуй уточнить вопрос или переключиться на справочный режим Mini."}
     if metadata.get("finish_reason") != "end":
         yield {"type": "status", "text": "Достигнут лимит генерации. Ответ может быть неполным."}
-    yield {"type": "done", "model": "Kraken Context 2", "route": "transformer", "finish_reason": metadata.get("finish_reason", "end"),
+    yield {"type": "done", "model": model_name, "route": "transformer", "finish_reason": metadata.get("finish_reason", "end"),
            "tokens": metadata.get("tokens", 0), "context_tokens": metadata.get("context_tokens", 0)}

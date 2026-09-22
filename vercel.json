@@ -7,7 +7,7 @@
     "api/chat.py": {
       "maxDuration": 30,
       "includeFiles": "neural/**",
-      "excludeFiles": "{.training-libs/**,training-output/**,training/**,tests/**,train.py,train_transformer.py}"
+      "excludeFiles": "{.training-libs/**,training-data/**,training-output/**,training/**,tests/**,train.py,train_transformer.py}"
     }
   },
   "headers": [{

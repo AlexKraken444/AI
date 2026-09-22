@@ -1,0 +1,44 @@
+{
+  "source": {
+    "repository": "OpenAssistant/oasst1",
+    "revision": "fdf72ae0827c1cda404aff25b6603abec9e3399b",
+    "filename": "2023-04-12_oasst_ready.messages.jsonl.gz",
+    "license": "Apache-2.0",
+    "sha256": "286a6e9a5a413b3272ae9c0b5a20d327983dea1c24342ae28cb244a6da65185c"
+  },
+  "raw_messages": 88838,
+  "accepted_oasst_examples": 784,
+  "rejected": {
+    "answer_quality_language_or_rank": 2684,
+    "incomplete_or_rejected_ancestor": 914
+  },
+  "splits": {
+    "train": {
+      "examples": 18152,
+      "by_source": {
+        "authored-v2": 11060,
+        "authored-context-v3": 6580,
+        "OpenAssistant/oasst1": 512
+      },
+      "sha256": "68ab3d1fff9c634c2e8ececb21ff24cdefb84d27a08ee682355aaceffc806a09"
+    },
+    "validation": {
+      "examples": 982,
+      "by_source": {
+        "authored-v2": 577,
+        "authored-context-v3": 375,
+        "OpenAssistant/oasst1": 30
+      },
+      "sha256": "3855d5b10d67d6f04c020ecd7c7e66319901e63cc191a5f02015711a1f56d390"
+    },
+    "test": {
+      "examples": 1052,
+      "by_source": {
+        "authored-v2": 655,
+        "authored-context-v3": 357,
+        "OpenAssistant/oasst1": 40
+      },
+      "sha256": "5c14db6de9332e4044fa913f39085b8fa388bf1e152302eae3ea91c66984199b"
+    }
+  }
+}

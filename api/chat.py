@@ -36,7 +36,7 @@ class handler(BaseHTTPRequestHandler):
             messages, personality = validate(payload)
             memory = validate_memory(payload.get("memory"))
             mode = payload.get("mode", "context")
-            if mode not in ("context", "reference"):
+            if mode not in ("context", "context3", "reference"):
                 raise ValueError("Unknown model mode")
         except (ValueError, UnicodeDecodeError):
             self.json_response(400, {"error": "Некорректный запрос: до 24 сообщений, каждое от 1 до 4000 символов."})
