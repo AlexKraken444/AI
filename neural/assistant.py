@@ -21,8 +21,13 @@ def assets():
 
 
 def calculate(text):
-    expression = re.sub(r"^(посчитай|вычисли|сколько будет|реши)\s*[:=]?\s*", "", text.lower()).strip().rstrip("?=").strip()
-    expression = expression.replace("×", "*").replace("÷", "/").replace("^", "**").replace(",", ".")
+    expression = text.lower().strip().rstrip("?!= ").strip()
+    expression = re.sub(r"^пожалуйста[,\s]+", "", expression)
+    expression = re.sub(r"[,\s]+пожалуйста$", "", expression)
+    request = r"(?:посчитай|вычисли|реши|чему равно|сколько(?: будет| получится)?)"
+    expression = re.sub(r"^" + request + r"\s*[:=]?\s*", "", expression)
+    expression = re.sub(r"\s+" + request + r"$", "", expression).strip().rstrip("?= ").strip()
+    expression = expression.replace("×", "*").replace("÷", "/").replace("−", "-").replace("^", "**").replace(",", ".")
     if not expression or len(expression) > 120 or not re.fullmatch(r"[\d\s.+*/()%\-]+", expression):
         return None
     operators = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul,

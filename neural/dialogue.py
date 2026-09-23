@@ -6,10 +6,11 @@ from neural.assistant import prepare_reply
 from neural.memory import memory_reply, memory_context
 
 
-@lru_cache(maxsize=2)
-def language_model(mode="context"):
+@lru_cache(maxsize=3)
+def language_model(mode="context4"):
     from neural.transformer import Transformer
-    return Transformer(Path(__file__).parent / "checkpoint3") if mode == "context3" else Transformer()
+    directories = {"context": "checkpoint", "context3": "checkpoint3", "context4": "checkpoint4"}
+    return Transformer(Path(__file__).parent / directories[mode])
 
 
 def source_event(sources):
@@ -19,15 +20,15 @@ def source_event(sources):
     ]}
 
 
-def text_events(answer, route, model="Kraken Context 2"):
+def text_events(answer, route, model="Kraken Context 4"):
     for offset in range(0, len(answer), 48):
         yield {"type": "token", "text": answer[offset:offset + 48]}
     yield {"type": "done", "model": model, "route": route, "finish_reason": "end"}
 
 
-def reply_events(messages, personality, memory, mode="context"):
+def reply_events(messages, personality, memory, mode="context4"):
     text = messages[-1]["content"].strip()
-    model_name = "Kraken Context 3" if mode == "context3" else "Kraken Mini" if mode == "reference" else "Kraken Context 2"
+    model_name = {"context4": "Kraken Context 4", "context3": "Kraken Context 3", "context": "Kraken Context 2", "reference": "Kraken Mini"}[mode]
     yield {"type": "status", "text": "Проверяю доступный контекст и сохранённую память."}
     recalled = memory_reply(text, memory)
     if recalled:
@@ -63,10 +64,7 @@ def reply_events(messages, personality, memory, mode="context"):
         yield source_event(sources)
         yield {"type": "status", "text": f"Добавляю в контекст {len(sources)} записей из памяти."}
     yield {"type": "status", "text": "Transformer учитывает порядок токенов и связи между ними в доступном контексте."}
-    if personality and route not in {"support", "unknown"}:
-        yield {"type": "status", "text": "Собираю ответ по токенам. На этот раз без карточки с готовой репликой."}
-    else:
-        yield {"type": "status", "text": "Последовательно предсказываю токены ответа."}
+    yield {"type": "status", "text": "Последовательно вычисляю вероятности следующих токенов ответа."}
     metadata, has_text = {}, False
     for event in model.generate_events(messages, context):
         if event["type"] == "token":

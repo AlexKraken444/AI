@@ -1,5 +1,6 @@
 import json
 import unittest
+from unittest.mock import patch
 import numpy as np
 from neural.transformer import Transformer
 from neural.tokenizer import Tokenizer, prompt_tokens, USER, ASSISTANT, MEMORY, END
@@ -61,6 +62,24 @@ class TransformerTests(unittest.TestCase):
         events=list(reply_events([{"role":"user","content":"Привет!"}],False,validate_memory(None),"context3"))
         self.assertEqual(events[-1]["type"],"done")
         self.assertEqual(events[-1]["model"],"Kraken Context 3")
+
+    def test_context4_greetings_use_generated_tokens_not_reference_answer(self):
+        for question in ("Привет как дела?", "Привет, как дела?"):
+            with self.subTest(question=question), patch("neural.dialogue.prepare_reply", return_value=("REFERENCE_SENTINEL", "", "greeting")):
+                events = list(reply_events([{"role": "user", "content": question}], False, validate_memory(None), "context4"))
+                answer = "".join(e["text"] for e in events if e["type"] == "token")
+                self.assertNotIn("REFERENCE_SENTINEL", answer)
+                self.assertIn("Привет", answer)
+                self.assertNotIn("Уфа", answer)
+                self.assertEqual(events[-1]["route"], "transformer")
+                self.assertEqual(events[-1]["model"], "Kraken Context 4")
+
+    def test_context4_goodbye_regression(self):
+        events = list(reply_events([{"role": "user", "content": "Пока"}], False, validate_memory(None)))
+        answer = "".join(e["text"] for e in events if e["type"] == "token")
+        self.assertTrue("встречи" in answer.lower() or "пока" in answer.lower(), answer)
+        self.assertNotIn("Python", answer)
+        self.assertEqual(events[-1]["route"], "transformer")
 
 
 class MemoryTests(unittest.TestCase):

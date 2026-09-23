@@ -71,6 +71,18 @@ class PipelineTests(unittest.TestCase):
             actual = labels[0][labels[0] != -100].tolist()
             self.assertEqual(actual, tokenizer.encode("Ответ.") + [END])
 
+    def test_sft_drops_overlong_question_instead_of_teaching_without_context(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            tokenizer = Tokenizer.fit(["Вопрос? Ответ."])
+            short = dict(category="dialogue", messages=[{"role": "user", "content": "Вопрос?"}], answer="Ответ.")
+            long = dict(short, messages=[{"role": "user", "content": "Вопрос? " * 100}])
+            for split in ("train", "validation"):
+                (root / (split + ".jsonl")).write_text(json.dumps(short) + "\n" + json.dumps(long), encoding="utf-8")
+            data = DialogueData(root, tokenizer, 64)
+            self.assertEqual(len(data.rows["train"]), 1)
+            self.assertEqual(data.rejected["train"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

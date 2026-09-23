@@ -1,0 +1,318 @@
+{
+  "model": {
+    "version": "kraken-context-4",
+    "width": 384,
+    "layers": 6,
+    "heads": 6,
+    "context": 512,
+    "vocabulary": 8192,
+    "seed": 43,
+    "parameters": 15363840
+  },
+  "pretrain": {
+    "stage": "pretrain",
+    "device": "cuda",
+    "parameters": 15363840,
+    "step": 6721,
+    "planned_steps": 8000,
+    "tokens": 110116864,
+    "best_validation_nll": 3.408956325054169,
+    "history": [
+      {
+        "step": 0,
+        "validation_nll": 9.133946228027344
+      },
+      {
+        "step": 500,
+        "validation_nll": 5.218072724342346,
+        "train_nll": 5.150209486484528,
+        "tokens": 8192000
+      },
+      {
+        "step": 1000,
+        "validation_nll": 4.761628317832947,
+        "train_nll": 4.648886024951935,
+        "tokens": 16384000
+      },
+      {
+        "step": 1500,
+        "validation_nll": 4.407420539855957,
+        "train_nll": 4.208282470703125,
+        "tokens": 24576000
+      },
+      {
+        "step": 2000,
+        "validation_nll": 4.159502828121186,
+        "train_nll": 3.9857076704502106,
+        "tokens": 32768000
+      },
+      {
+        "step": 2500,
+        "validation_nll": 3.9486409068107604,
+        "train_nll": 3.858341544866562,
+        "tokens": 40960000
+      },
+      {
+        "step": 3000,
+        "validation_nll": 3.80358145236969,
+        "train_nll": 3.7007363736629486,
+        "tokens": 49152000
+      },
+      {
+        "step": 3500,
+        "validation_nll": 3.6894792795181273,
+        "train_nll": 3.6380633115768433,
+        "tokens": 57344000
+      },
+      {
+        "step": 4000,
+        "validation_nll": 3.6158244729042055,
+        "train_nll": 3.465640604496002,
+        "tokens": 65536000
+      },
+      {
+        "step": 4500,
+        "validation_nll": 3.5540191173553466,
+        "train_nll": 3.551661193370819,
+        "tokens": 73728000
+      },
+      {
+        "step": 5000,
+        "validation_nll": 3.508518028259277,
+        "train_nll": 3.4881073236465454,
+        "tokens": 81920000
+      },
+      {
+        "step": 5500,
+        "validation_nll": 3.471045446395874,
+        "train_nll": 3.283516049385071,
+        "tokens": 90112000
+      },
+      {
+        "step": 6000,
+        "validation_nll": 3.437983810901642,
+        "train_nll": 3.3215944170951843,
+        "tokens": 98304000
+      },
+      {
+        "step": 6500,
+        "validation_nll": 3.4155946373939514,
+        "train_nll": 3.0845064520835876,
+        "tokens": 106496000
+      },
+      {
+        "step": 6721,
+        "validation_nll": 3.408956325054169,
+        "train_nll": 3.1866055130958557,
+        "tokens": 110116864
+      }
+    ],
+    "session_training_seconds": 1203.97,
+    "data": {
+      "train": "b223f4ed4a46a44cd2f3bb64ddcf3283fae8b73a27189415739387ddb96466d3",
+      "validation": "2919c5840c18d32c42fcec7c120c449b592fbdb32b064ff243d4a1c5682bc95d",
+      "tokenizer": "518667fa1688200ee359e204d4394d083ac3b0940e9f6f9cb7b8d869fca6bebb"
+    },
+    "ready_for_chat": false,
+    "note": "NLL is next-token prediction loss, not conversational quality. Evaluate chat separately."
+  },
+  "sft": {
+    "stage": "sft",
+    "device": "cuda",
+    "parameters": 15363840,
+    "step": 4000,
+    "planned_steps": 4000,
+    "tokens": 10760456,
+    "best_validation_nll": 2.457608566211231,
+    "history": [
+      {
+        "step": 0,
+        "validation_nll": 3.8269143012715987
+      },
+      {
+        "step": 250,
+        "validation_nll": 2.9999044288329912,
+        "train_nll": 2.84044548869133,
+        "tokens": 681972
+      },
+      {
+        "step": 500,
+        "validation_nll": 2.8461975381114155,
+        "train_nll": 2.6520195603370667,
+        "tokens": 1364048
+      },
+      {
+        "step": 750,
+        "validation_nll": 2.7608040646929637,
+        "train_nll": 2.5292139053344727,
+        "tokens": 2028665
+      },
+      {
+        "step": 1000,
+        "validation_nll": 2.7002981618655344,
+        "train_nll": 2.3425174951553345,
+        "tokens": 2701842
+      },
+      {
+        "step": 1250,
+        "validation_nll": 2.657368141385868,
+        "train_nll": 2.6318470239639282,
+        "tokens": 3363430
+      },
+      {
+        "step": 1500,
+        "validation_nll": 2.6098995180081808,
+        "train_nll": 2.3542896062135696,
+        "tokens": 4030905
+      },
+      {
+        "step": 1750,
+        "validation_nll": 2.5845220738006995,
+        "train_nll": 1.9893056601285934,
+        "tokens": 4702817
+      },
+      {
+        "step": 2000,
+        "validation_nll": 2.5527167881044788,
+        "train_nll": 2.256237119436264,
+        "tokens": 5383819
+      },
+      {
+        "step": 2250,
+        "validation_nll": 2.53187967672193,
+        "train_nll": 2.211540400981903,
+        "tokens": 6062142
+      },
+      {
+        "step": 2500,
+        "validation_nll": 2.5136664309408507,
+        "train_nll": 2.1663817763328552,
+        "tokens": 6738168
+      },
+      {
+        "step": 2750,
+        "validation_nll": 2.496773419525434,
+        "train_nll": 1.8938374519348145,
+        "tokens": 7407092
+      },
+      {
+        "step": 3000,
+        "validation_nll": 2.4882195728949683,
+        "train_nll": 2.073649376630783,
+        "tokens": 8076955
+      },
+      {
+        "step": 3250,
+        "validation_nll": 2.4755656702598903,
+        "train_nll": 1.8854141235351562,
+        "tokens": 8746611
+      },
+      {
+        "step": 3500,
+        "validation_nll": 2.467914766275953,
+        "train_nll": 2.144701585173607,
+        "tokens": 9413811
+      },
+      {
+        "step": 3750,
+        "validation_nll": 2.4636972169702847,
+        "train_nll": 1.9821561723947525,
+        "tokens": 10083932
+      },
+      {
+        "step": 4000,
+        "validation_nll": 2.457608566211231,
+        "train_nll": 2.026608869433403,
+        "tokens": 10760456
+      }
+    ],
+    "session_training_seconds": 600.09,
+    "data": {
+      "train": "376f04f928b16c5e316d91bce5b23e6a89624b2746803e09b6554dee945f26ed",
+      "validation": "3c66f863b55e01d085e133861c620dc208736e8899e58af55fe05178ce559dc9",
+      "tokenizer": "518667fa1688200ee359e204d4394d083ac3b0940e9f6f9cb7b8d869fca6bebb",
+      "initial_weights": "50721744a8693888a693d1935250b39ee02c2c58db33b44a78ed48a86d0e93d9"
+    },
+    "ready_for_chat": false,
+    "note": "NLL is next-token prediction loss, not conversational quality. Evaluate chat separately."
+  },
+  "language_data": {
+    "source": "wikimedia/wikipedia",
+    "revision": "b04c8d1ceb2f5cd4588862100d08de323dccfbaa",
+    "license": "CC-BY-SA-3.0 / GFDL",
+    "scope": "bounded train token prefix; full disjoint validation/test documents",
+    "attribution": "training-data/language/{train,validation,test}.jsonl retain article URLs/titles/IDs",
+    "splits": {
+      "train": {
+        "tokens": 71135516,
+        "sha256": "b223f4ed4a46a44cd2f3bb64ddcf3283fae8b73a27189415739387ddb96466d3"
+      },
+      "validation": {
+        "tokens": 2289029,
+        "sha256": "2919c5840c18d32c42fcec7c120c449b592fbdb32b064ff243d4a1c5682bc95d"
+      },
+      "test": {
+        "tokens": 1991783,
+        "sha256": "de3eab260b9e36200f8f6357697ba185ebe52452366de2341d510ac223413c9b"
+      }
+    }
+  },
+  "dialogue_data": {
+    "source": "IlyaGusev/ru_turbo_alpaca",
+    "author": "Ilya Gusev and contributors",
+    "revision": "460b1f3312aa21ef774e916e532a9576f7938a0d",
+    "license": "CC-BY-4.0",
+    "archive_sha256": "5b7ceb2bd34a025d4618222d273f36a129910dfcb148e75d366cb992a74eb9e7",
+    "note": "Synthetic instruction pairs; negative reviews excluded, unlabeled rows not independently verified. Also OASST1 Apache-2.0 and authored smalltalk.",
+    "rejected": {
+      "negative_review": 901,
+      "email": 8,
+      "duplicate": 1,
+      "cross_source_duplicate": 1
+    },
+    "splits": {
+      "train": {
+        "examples": 26882,
+        "by_source": {
+          "IlyaGusev/ru_turbo_alpaca": 26062,
+          "OpenAssistant/oasst1": 511,
+          "authored-smalltalk": 309
+        },
+        "sha256": "376f04f928b16c5e316d91bce5b23e6a89624b2746803e09b6554dee945f26ed"
+      },
+      "validation": {
+        "examples": 1500,
+        "by_source": {
+          "IlyaGusev/ru_turbo_alpaca": 1458,
+          "OpenAssistant/oasst1": 30,
+          "authored-smalltalk": 12
+        },
+        "sha256": "3c66f863b55e01d085e133861c620dc208736e8899e58af55fe05178ce559dc9"
+      },
+      "test": {
+        "examples": 1444,
+        "by_source": {
+          "IlyaGusev/ru_turbo_alpaca": 1392,
+          "OpenAssistant/oasst1": 40,
+          "authored-smalltalk": 12
+        },
+        "sha256": "82f18c8421072a5832b9f7c1b8cb1f314bf7a1535e897519d1b89976cd8570db"
+      }
+    }
+  },
+  "encoding": {
+    "accepted": {
+      "train": 26742,
+      "validation": 1496
+    },
+    "rejected_length": {
+      "train": 140,
+      "validation": 4
+    }
+  },
+  "general_chat_ready": false,
+  "export_parity": "passed atol=1e-3 rtol=1e-3",
+  "weights_sha256": "2df0848999784bba0d1aca92f84fb7062c7392fe721ef6cd3ce0fd9dce7dbc39",
+  "sft_basic_fraction": 0.1,
+  "total_training_session_seconds": 1804.06
+}

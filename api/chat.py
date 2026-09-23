@@ -21,7 +21,7 @@ class handler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def do_GET(self):
-        self.json_response(200, {"ok": True, "model": "Kraken Context 2", "type": "causal transformer", "external_ai": False, "memory": "browser-owned per-request context"})
+        self.json_response(200, {"ok": True, "model": "Kraken Context 4", "type": "causal transformer", "external_ai": False, "memory": "browser-owned per-request context"})
 
     def do_POST(self):
         if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
@@ -35,8 +35,8 @@ class handler(BaseHTTPRequestHandler):
             payload = json.loads(self.rfile.read(size).decode("utf-8"))
             messages, personality = validate(payload)
             memory = validate_memory(payload.get("memory"))
-            mode = payload.get("mode", "context")
-            if mode not in ("context", "context3", "reference"):
+            mode = payload.get("mode", "context4")
+            if mode not in ("context", "context3", "context4", "reference"):
                 raise ValueError("Unknown model mode")
         except (ValueError, UnicodeDecodeError):
             self.json_response(400, {"error": "Некорректный запрос: до 24 сообщений, каждое от 1 до 4000 символов."})

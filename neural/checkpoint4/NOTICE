@@ -1,0 +1,31 @@
+Kraken Context 4: own Transformer, trained from random initialization.
+No pretrained model weights or pretrained tokenizer were imported.
+
+Architecture: 15,363,840 parameters, 6 layers, width 384, 6 attention heads,
+512-token context, own BPE tokenizer (8192 entries).
+
+Training sources and attribution:
+1. Wikimedia Wikipedia, Russian snapshot 20231101.ru.
+   https://huggingface.co/datasets/wikimedia/wikipedia
+   Revision b04c8d1ceb2f5cd4588862100d08de323dccfbaa.
+   Source licenses: CC-BY-SA-3.0 / GFDL.
+   Article authors/contributors are attributed by URLs, titles and IDs in the
+   locally retained source JSONL. Training uses a bounded prefix, not all Wikipedia.
+   https://creativecommons.org/licenses/by-sa/3.0/
+2. RuTurboAlpaca, Ilya Gusev and contributors.
+   https://huggingface.co/datasets/IlyaGusev/ru_turbo_alpaca
+   Revision 460b1f3312aa21ef774e916e532a9576f7938a0d.
+   Source license: CC-BY-4.0.
+   https://creativecommons.org/licenses/by/4.0/
+   Synthetic instruction/answer data; filtered and split for this training run.
+3. OpenAssistant/oasst1, OpenAssistant contributors.
+   https://huggingface.co/datasets/OpenAssistant/oasst1
+   Revision fdf72ae0827c1cda404aff25b6603abec9e3399b.
+   Source license: Apache-2.0, see training/licenses/Apache-2.0.txt.
+4. Authored short conversational training examples in training/prepare_budget.py.
+
+Weights and tokenizer are the result of the project's own training process.
+Source corpora are not bundled into the Vercel application.
+See training/BUDGET_RUN.md and the training reports for filtering, provenance,
+reproduction commands and limitations. Limited training does not establish
+reliable general reasoning, factual accuracy, or conversational quality.

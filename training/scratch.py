@@ -38,9 +38,11 @@ class LanguageData:
 
 
 class DialogueData:
-    def __init__(self, directory, tokenizer, context):
+    def __init__(self, directory, tokenizer, context, basic_fraction=0.):
         self.rows = {}
         self.rejected = {}
+        self.basic_indices = []
+        self.basic_fraction = basic_fraction
         for split in ("train", "validation"):
             rows, rejected = [], 0
             with (Path(directory) / (split + ".jsonl")).open(encoding="utf-8") as stream:
@@ -54,7 +56,12 @@ class DialogueData:
                         rejected += 1
                         continue
                     prompt = prompt_tokens(tokenizer, e["messages"], e.get("memory", ""),
-                                           limit=context + 1 - len(answer))
+                                           limit=context + 1)
+                    if len(prompt) + len(answer) > context + 1:
+                        rejected += 1
+                        continue
+                    if split == "train" and e.get("source") == "authored-smalltalk":
+                        self.basic_indices.append(len(rows))
                     rows.append((prompt + answer, [-100] * (len(prompt) - 1) + answer))
             if not rows:
                 raise ValueError(f"No complete dialogues fit {split}; increase context or supply more data")
@@ -63,7 +70,11 @@ class DialogueData:
 
     def batch(self, split, size, rng):
         rows = self.rows[split]
-        chosen = [rows[i] for i in rng.integers(0, len(rows), size=size)]
+        indices = rng.integers(0, len(rows), size=size)
+        if split == "train" and self.basic_indices and self.basic_fraction:
+            mask = rng.random(size) < self.basic_fraction
+            indices[mask] = rng.choice(self.basic_indices, size=int(mask.sum()))
+        chosen = [rows[i] for i in indices]
         length = max(len(y) for _, y in chosen)
         x = torch.zeros((size, length), dtype=torch.long)
         y = torch.full_like(x, -100)
@@ -116,11 +127,12 @@ def main():
     p.add_argument("--eval-batches", type=int, default=20)
     p.add_argument("--max-seconds", type=float, default=0, help="Stop after saving a resumable checkpoint")
     p.add_argument("--threads", type=int, default=4)
+    p.add_argument("--basic-fraction", type=float, default=0., help="SFT-only extra sampling probability for authored conversational basics")
     args = p.parse_args()
     if min(args.steps, args.batch, args.accumulate, args.eval_every, args.eval_batches,
            args.width, args.layers, args.heads, args.context, args.threads) < 1:
         p.error("Counts must be positive")
-    if args.width % args.heads or args.context < 16 or args.lr <= 0 or args.max_seconds < 0:
+    if args.width % args.heads or args.context < 16 or args.lr <= 0 or args.max_seconds < 0 or not 0 <= args.basic_fraction <= .5:
         p.error("Invalid architecture or optimizer settings")
     if (args.stage == "sft") != bool(args.initialize):
         p.error("SFT requires --initialize; pretraining always starts from random weights")
@@ -145,7 +157,7 @@ def main():
         config = dict(version="kraken-scratch-pretrain", width=args.width, layers=args.layers,
                       heads=args.heads, context=args.context, vocabulary=len(tokenizer.tokens), seed=43)
     data = (LanguageData(directory, config["context"]) if args.stage == "pretrain" else
-            DialogueData(directory, tokenizer, config["context"]))
+            DialogueData(directory, tokenizer, config["context"], args.basic_fraction))
     suffix = ".bin" if args.stage == "pretrain" else ".jsonl"
     signature = {s: sha256(directory / (s + suffix)) for s in ("train", "validation")}
     signature["tokenizer"] = sha256(origin / "tokenizer.json")
@@ -159,6 +171,8 @@ def main():
     scaler = torch.amp.GradScaler("cuda", enabled=device == "cuda" and dtype == torch.float16)
     start_step, seen, best, history = 0, 0, float("inf"), []
     run_settings = {k: getattr(args, k) for k in ("stage", "steps", "batch", "accumulate", "lr", "eval_batches")}
+    if args.stage == "sft":
+        run_settings["basic_fraction"] = args.basic_fraction
     if args.resume:
         state = torch.load(output / "last.pt", map_location="cpu", weights_only=True)
         if state["config"] != config or state["data"] != signature or state["settings"] != run_settings:
@@ -223,6 +237,7 @@ def main():
             temp.replace(output / "last.pt")
             report = dict(stage=args.stage, device=device, parameters=config["parameters"], step=step,
                           planned_steps=args.steps, tokens=seen, best_validation_nll=best, history=history,
+                          session_training_seconds=round(time.monotonic() - begin, 2),
                           data=signature, ready_for_chat=False,
                           note="NLL is next-token prediction loss, not conversational quality. Evaluate chat separately.")
             (output / "progress.json").write_text(json.dumps(report, indent=2), encoding="utf-8")

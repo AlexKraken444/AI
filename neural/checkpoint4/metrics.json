@@ -1,0 +1,8 @@
+{
+  "parameters": 15363840,
+  "training_seconds": 1804.06,
+  "general_chat_ready": false,
+  "weights_sha256": "2df0848999784bba0d1aca92f84fb7062c7392fe721ef6cd3ce0fd9dce7dbc39",
+  "report": "training/context4_training.json",
+  "raw_answers": "training/context4_review.json"
+}

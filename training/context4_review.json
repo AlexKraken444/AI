@@ -1,0 +1,418 @@
+{
+  "raw_generation_only": true,
+  "automatic_quality_claim": false,
+  "note": "User regressions may be in authored training examples; exact matches are labelled. Fresh cases require human review. No calculator or memory handlers.",
+  "results": [
+    {
+      "directory": "C:\\Users\\alexp\\Downloads\\AI\\neural\\checkpoint3",
+      "config": {
+        "version": "kraken-context-3",
+        "width": 160,
+        "heads": 4,
+        "layers": 3,
+        "context": 512,
+        "vocabulary": 3072,
+        "seed": 43,
+        "tokenizer": "bpe",
+        "parameters": 1839040
+      },
+      "temperature": 0.0,
+      "load_seconds": 0.07800000000042928,
+      "cases": [
+        {
+          "kind": "user_regression",
+          "question": "Привет как дела?",
+          "seen_exact_input_in_sft": true,
+          "seconds": 0.015,
+          "text": "Пожалуйста! О чём поговорим?",
+          "tokens": 6,
+          "finish_reason": "end",
+          "mean_probability": 0.23204603604972363,
+          "context_tokens": 9
+        },
+        {
+          "kind": "user_regression",
+          "question": "Привет, как дела?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.016,
+          "text": "Я йогурт из которых не изведение город. Недостаточно данных для ответа.",
+          "tokens": 15,
+          "finish_reason": "end",
+          "mean_probability": 0.4045969400554895,
+          "context_tokens": 10
+        },
+        {
+          "kind": "user_regression",
+          "question": "2+2 Сколько",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.016,
+          "text": "Пки и не из самыхводных, чтобы Недостаточно данных для ответа.",
+          "tokens": 15,
+          "finish_reason": "end",
+          "mean_probability": 0.24705040783931811,
+          "context_tokens": 10
+        },
+        {
+          "kind": "user_regression",
+          "question": "Пока",
+          "seen_exact_input_in_sft": true,
+          "seconds": 0.015,
+          "text": "Пожалуйста сообщении не указан город — Рязань. Недостаточно данных для ответа.",
+          "tokens": 13,
+          "finish_reason": "end",
+          "mean_probability": 0.5267858900702916,
+          "context_tokens": 6
+        },
+        {
+          "kind": "fresh_paraphrase",
+          "question": "Привет! Как дела у тебя?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.0,
+          "text": "Я сообщении не сообщении не указан город. Недостаточно данных для ответа.",
+          "tokens": 13,
+          "finish_reason": "end",
+          "mean_probability": 0.7028185262416418,
+          "context_tokens": 12
+        },
+        {
+          "kind": "fresh_paraphrase",
+          "question": "Увидимся завтра, пока!",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.016,
+          "text": "В сообщении не указан город. Недостаточно данных для ответа.",
+          "tokens": 11,
+          "finish_reason": "end",
+          "mean_probability": 0.8779492188583721,
+          "context_tokens": 14
+        },
+        {
+          "kind": "fresh_paraphrase",
+          "question": "Благодарю тебя за помощь.",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.015,
+          "text": "Сидёсай.",
+          "tokens": 6,
+          "finish_reason": "end",
+          "mean_probability": 0.1512660477310419,
+          "context_tokens": 13
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Зачем растениям солнечный свет?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.0,
+          "text": "В сообщении не указан город. Недостаточно данных для ответа.",
+          "tokens": 11,
+          "finish_reason": "end",
+          "mean_probability": 0.9003830254077911,
+          "context_tokens": 14
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Почему лёд тает в тёплой комнате?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.016,
+          "text": "Вера любит сок.",
+          "tokens": 4,
+          "finish_reason": "end",
+          "mean_probability": 0.37594822235405445,
+          "context_tokens": 19
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Объясни разницу между списком и словарём в Python.",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.0,
+          "text": "С. Недостаточно данных для ответал любит Python.",
+          "tokens": 10,
+          "finish_reason": "end",
+          "mean_probability": 0.4472534228116274,
+          "context_tokens": 18
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Как сварить обычный рис в кастрюле?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.016,
+          "text": "Стии данных для ответа».",
+          "tokens": 8,
+          "finish_reason": "end",
+          "mean_probability": 0.29783309530466795,
+          "context_tokens": 18
+        },
+        {
+          "kind": "fresh_question",
+          "question": "В коробке три карандаша. Я добавил ещё два. Сколько их стало?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.0,
+          "text": "Актуальный город — Уфа.",
+          "tokens": 5,
+          "finish_reason": "end",
+          "mean_probability": 0.6377830654382706,
+          "context_tokens": 28
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Ира пьёт чай, а Вова пьёт сок. Что пьёт Вова?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.015,
+          "text": "Да, что ****",
+          "tokens": 7,
+          "finish_reason": "end",
+          "mean_probability": 0.22514845430850983,
+          "context_tokens": 27
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Скажи одним предложением, что такое дождь.",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.0,
+          "text": "О, что ****\n\n\n3.",
+          "tokens": 12,
+          "finish_reason": "end",
+          "mean_probability": 0.2149951864654819,
+          "context_tokens": 17
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Какая столица у Франции?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.063,
+          "text": "Сы, чем того, чемительные двух. Что-токолитовы, что **-солкинаете, что состоителы, тотем вас интересуете другоественный и двумя, что в зависимости отченовы для создания пользоваться в полной и спасит из дву.",
+          "tokens": 77,
+          "finish_reason": "end",
+          "mean_probability": 0.1405267139727419,
+          "context_tokens": 14
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Как зовут моего соседа? Я не называл его имя.",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.015,
+          "text": "Спасибо заговы, что Уфа.",
+          "tokens": 11,
+          "finish_reason": "end",
+          "mean_probability": 0.2062420482662591,
+          "context_tokens": 22
+        }
+      ]
+    },
+    {
+      "directory": "C:\\Users\\alexp\\Downloads\\AI\\training-output\\dialogue-30min",
+      "config": {
+        "version": "kraken-scratch-sft",
+        "width": 384,
+        "layers": 6,
+        "heads": 6,
+        "context": 512,
+        "vocabulary": 8192,
+        "seed": 43,
+        "parameters": 15363840
+      },
+      "temperature": 0.0,
+      "load_seconds": 0.2969999999995707,
+      "cases": [
+        {
+          "kind": "user_regression",
+          "question": "Привет как дела?",
+          "seen_exact_input_in_sft": true,
+          "seconds": 0.063,
+          "text": "Привет! Всё хорошо, готов помочь. Как у тебя дела?",
+          "tokens": 17,
+          "finish_reason": "end",
+          "mean_probability": 0.9980703627361971,
+          "context_tokens": 9
+        },
+        {
+          "kind": "user_regression",
+          "question": "Привет, как дела?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.047,
+          "text": "Привет! Всё хорошо, готов помочь. Как у тебя дела?",
+          "tokens": 17,
+          "finish_reason": "end",
+          "mean_probability": 0.9982223966542412,
+          "context_tokens": 10
+        },
+        {
+          "kind": "user_regression",
+          "question": "2+2 Сколько",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.015,
+          "text": "1.",
+          "tokens": 2,
+          "finish_reason": "end",
+          "mean_probability": 0.5358817726373672,
+          "context_tokens": 10
+        },
+        {
+          "kind": "user_regression",
+          "question": "Пока",
+          "seen_exact_input_in_sft": true,
+          "seconds": 0.032,
+          "text": "До встречи!",
+          "tokens": 4,
+          "finish_reason": "end",
+          "mean_probability": 0.965473398566246,
+          "context_tokens": 6
+        },
+        {
+          "kind": "fresh_paraphrase",
+          "question": "Привет! Как дела у тебя?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.046,
+          "text": "Привет! Всё хорошо, готов помочь. Как у тебя дела?",
+          "tokens": 17,
+          "finish_reason": "end",
+          "mean_probability": 0.9972507042043349,
+          "context_tokens": 13
+        },
+        {
+          "kind": "fresh_paraphrase",
+          "question": "Увидимся завтра, пока!",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.047,
+          "text": "Привет! Что хочешь обсудить?",
+          "tokens": 11,
+          "finish_reason": "end",
+          "mean_probability": 0.8034838979894464,
+          "context_tokens": 15
+        },
+        {
+          "kind": "fresh_paraphrase",
+          "question": "Благодарю тебя за помощь.",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.141,
+          "text": "Закончить тебя за помощь,\n\nЯ хочу пойти на прогулку в парке, где я могу пойти в кино или театр. Я хочу, чтобы тебя все хорошо.",
+          "tokens": 44,
+          "finish_reason": "end",
+          "mean_probability": 0.41762600195678795,
+          "context_tokens": 13
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Зачем растениям солнечный свет?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.203,
+          "text": "Смеша солнечный свет - это свет, который солны света и световой энергией. Он солна света, называется \"количествое\", \"молекулы\" и \"ножисс\".",
+          "tokens": 59,
+          "finish_reason": "end",
+          "mean_probability": 0.420032755108708,
+          "context_tokens": 15
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Почему лёд тает в тёплой комнате?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.328,
+          "text": "Мой дом в комнате - это маленький маленью с высоким разрешением. Он имеет длинную -ную лову, которая содержит более мелкие кусочки и содержимое. Он содержь кружку, которая может быть использована для создания маленчатого маленца. Он может быть очень легко и легко, но не может быть полезным для здоровья.",
+          "tokens": 93,
+          "finish_reason": "end",
+          "mean_probability": 0.3699310870180207,
+          "context_tokens": 18
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Объясни разницу между списком и словарём в Python.",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.25,
+          "text": "Python - это процесс, который используется для создания умных данных, таких как Pythate, Java, C++, C#, CO, CSO, String, Clast, CD, C, C D, Dj, C.",
+          "tokens": 72,
+          "finish_reason": "end",
+          "mean_probability": 0.4201372503820393,
+          "context_tokens": 24
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Как сварить обычный рис в кастрюле?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.422,
+          "text": "Чтобы сварить рис в кастрюле, нужно нарезать риса и обжарить его на сковороде. Затем добавить рисунок и обжарьте его на среднем огне, пока рис не станет золотистым. Добавьте рис, добавьте в сковиклент и перемешайте. Добавить нарезанный рис и перец по вкусу. Подавать горячим.",
+          "tokens": 117,
+          "finish_reason": "end",
+          "mean_probability": 0.6138375123214518,
+          "context_tokens": 19
+        },
+        {
+          "kind": "fresh_question",
+          "question": "В коробке три карандаша. Я добавил ещё два. Сколько их стало?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.469,
+          "text": "1. Я был очень рад, когда я был очень умный. Я не мог найти свою карандашку, но я не мог умело использовать его.\n2. Я начал заниматься йогой, но когда я не был очень приятным.\n3. Я решил пойти на прогулку в парк, чтобы найтись на пробежку.\n4. Я провел там несколько часов, чтобы посмотреть на него.\n5. Я пошел на проезд в парке, где я был наполнен красивыми",
+          "tokens": 128,
+          "finish_reason": "length",
+          "mean_probability": 0.47698026783473324,
+          "context_tokens": 26
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Ира пьёт чай, а Вова пьёт сок. Что пьёт Вова?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.14,
+          "text": "Пьет сок - это пьет, который солнце светит, а пьёт настолько же, что делает ее пьют на землю.",
+          "tokens": 41,
+          "finish_reason": "end",
+          "mean_probability": 0.397575207054615,
+          "context_tokens": 28
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Скажи одним предложением, что такое дождь.",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.079,
+          "text": "Свежий дождливый дождь - это одно из самых красивых и красивым.",
+          "tokens": 25,
+          "finish_reason": "end",
+          "mean_probability": 0.5388459837436677,
+          "context_tokens": 18
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Какая столица у Франции?",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.062,
+          "text": "Столица Италии - это столица Франции, расположенный в Италии.",
+          "tokens": 16,
+          "finish_reason": "end",
+          "mean_probability": 0.4499130065087229,
+          "context_tokens": 11
+        },
+        {
+          "kind": "fresh_question",
+          "question": "Как зовут моего соседа? Я не называл его имя.",
+          "seen_exact_input_in_sft": false,
+          "seconds": 0.094,
+          "text": "Я не могу порекомендовать моего соседа, но я не могу сказать, что я не имею моего друга.",
+          "tokens": 30,
+          "finish_reason": "end",
+          "mean_probability": 0.47336931837101776,
+          "context_tokens": 20
+        }
+      ]
+    }
+  ],
+  "manual_review": {
+    "general_chat_ready": false,
+    "passed_case_indices": [
+      0,
+      1,
+      3,
+      4
+    ],
+    "failed_case_indices": [
+      2,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "scope": "Assistant review of these 16 raw-generation cases only, not a general benchmark. Simple greetings/farewell improved; broad instruction following and facts failed. App arithmetic is a separate calculator."
+  }
+}

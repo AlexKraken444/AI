@@ -36,6 +36,15 @@ class ModelTests(unittest.TestCase):
             self.assertIn("Не получилось", calculate(value))
         self.assertIsNone(calculate("__import__('os').system('echo bad')"))
 
+    def test_calculator_understands_question_before_or_after_expression(self):
+        for question in ("2+2 Сколько", "2+2 сколько?", "Сколько 2+2?", "Чему равно 2+2?",
+                         "Пожалуйста, посчитай 2+2", "Вычисли 2+2, пожалуйста!"):
+            with self.subTest(question=question):
+                self.assertEqual(calculate(question), "2+2 = 4")
+        for question in ("Мне 2 года, тебе 2 года", "Почему 2+2 равно 4?", "2+2 или 3+3?", "Сколько людей в Уфе?"):
+            with self.subTest(question=question):
+                self.assertIsNone(calculate(question))
+
     def test_name_context_and_repeat(self):
         history = [{"role": "user", "content": "Меня зовут Алекс"}, {"role": "assistant", "content": "Привет, Алекс!"}]
         answer = prepare_reply(history + [{"role": "user", "content": "Как меня зовут?"}], False)[0]
@@ -88,6 +97,15 @@ class HTTPTests(unittest.TestCase):
         events = [json.loads(line) for line in body.splitlines()]
         self.assertEqual(events[0]["type"], "status")
         self.assertEqual(events[-1]["type"], "done")
+
+    def test_new_default_model_and_suffix_calculation(self):
+        payload = json.dumps({"messages": [{"role": "user", "content": "2+2 Сколько"}]}).encode()
+        code, body, _ = self.request("POST", "/api/chat", payload, {"Content-Type": "application/json"})
+        self.assertEqual(code, 200)
+        events = [json.loads(line) for line in body.splitlines()]
+        self.assertEqual("".join(e["text"] for e in events if e["type"] == "token"), "2+2 = 4")
+        self.assertEqual(events[-1]["route"], "calculator")
+        self.assertEqual(events[-1]["model"], "Kraken Context 4")
         self.assertEqual("".join(e["text"] for e in events if e["type"] == "token"), "2+2 = 4")
 
     def test_invalid_requests(self):

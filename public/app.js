@@ -4,7 +4,7 @@ const storeKey = "kraken.chats.v1";
 const makeId = () => crypto.randomUUID();
 let chats = [], currentId = null, pending = null, toastTimer;
 let personality = true;
-let memory = KrakenMemory.blank(), modelMode = "context";
+let memory = KrakenMemory.blank(), modelMode = KrakenModels.defaultMode;
 
 function toast(text) {
   $("#toast").textContent = text;
@@ -29,7 +29,7 @@ function load() {
     }));
     currentId = chats.some(c => c.id === state.currentId) ? state.currentId : null;
     personality = state.personality !== false;
-    modelMode = ["context3", "reference"].includes(state.modelMode) ? state.modelMode : "context";
+    modelMode = KrakenModels.restore(state);
     memory = KrakenMemory.normalize(state.memory);
     if (!state.memory) {
       // One-time migration: recognize explicit user facts in already saved chats.
@@ -41,7 +41,7 @@ function load() {
 }
 
 function save() {
-  try { localStorage.setItem(storeKey, JSON.stringify({chats, currentId, personality, memory, modelMode})); }
+  try { localStorage.setItem(storeKey, JSON.stringify({chats, currentId, personality, memory, modelMode, modelRevision: KrakenModels.revision})); }
   catch { toast("Браузер не смог сохранить историю. Текущий диалог остаётся доступен до закрытия страницы."); }
 }
 
@@ -109,7 +109,7 @@ function renderMessage(message, chat) {
   if (message.role === "user") { article.append(element("div", "message-body", message.content)); return article; }
   const label = element("div", "message-label");
   const logo = element("img"); logo.src = "/favicon.svg"; logo.alt = "";
-  label.append(logo, document.createTextNode("Kraken"), element("span", "", message.model === "Kraken Mini" ? "MINI" : message.model === "Kraken Context 3" ? "CONTEXT 3" : "CONTEXT 2")); article.append(label);
+  label.append(logo, document.createTextNode("Kraken"), element("span", "", message.model.replace(/^Kraken /, "").toUpperCase())); article.append(label);
   const details = element("details", `processing${message.state === "pending" ? " pending" : ""}`);
   details.open = message.state === "pending";
   const summary = element("summary", "", message.state === "pending" ? "Обрабатываю запрос…" : "Обработка и комментарии");
@@ -188,7 +188,7 @@ function updateControls() {
   button.classList.toggle("stop", Boolean(pending));
   button.setAttribute("aria-label", pending ? "Остановить ответ" : "Отправить сообщение");
   $("#personality").setAttribute("aria-pressed", String(personality));
-  $("#model-version").textContent = modelMode === "context3" ? "Context 3" : modelMode === "context" ? "Context 2" : "Mini 1";
+  $("#model-version").textContent = KrakenModels.names[modelMode].replace(/^Kraken /, "");
   $("#model-mode").value = modelMode;
   $("#memory-count").textContent = memory.enabled ? memory.facts.length : "выкл.";
   $("#memory-shortcut").textContent = memory.enabled ? `◈ Память · ${memory.facts.length}` : "◈ Память выключена";
@@ -205,7 +205,7 @@ function stop() {
 }
 
 async function requestReply(chat) {
-  const message = {id: makeId(), role: "assistant", content: "", statuses: [], sources: [], model: modelMode === "context3" ? "Kraken Context 3" : modelMode === "context" ? "Kraken Context 2" : "Kraken Mini", state: "pending"};
+  const message = {id: makeId(), role: "assistant", content: "", statuses: [], sources: [], model: KrakenModels.names[modelMode], state: "pending"};
   const controller = new AbortController();
   const context = chat.messages.filter(m => m.content && (m.role === "user" || m.state === "done")).slice(-24).map(({role, content}) => ({role, content}));
   // Keep the serialized UTF-8 request comfortably below the API body limit.
