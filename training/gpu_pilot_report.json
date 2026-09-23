@@ -1,0 +1,45 @@
+{
+  "stage": "pretrain",
+  "device": "cuda",
+  "parameters": 15363840,
+  "step": 362,
+  "planned_steps": 10000,
+  "tokens": 5931008,
+  "best_validation_nll": 5.478155255317688,
+  "history": [
+    {
+      "step": 0,
+      "validation_nll": 9.1502685546875
+    },
+    {
+      "step": 250,
+      "validation_nll": 5.779649138450623,
+      "train_nll": 5.557040989398956,
+      "tokens": 4096000
+    },
+    {
+      "step": 362,
+      "validation_nll": 5.478155255317688,
+      "train_nll": 5.180104732513428,
+      "tokens": 5931008
+    }
+  ],
+  "data": {
+    "train": "b527e58e25c740a972b13e79477e1faca82ecd4c9a0cb064c802db926703fee0",
+    "validation": "80f293f90e6d4691be12c515ede78a31aaacf437af9b21441f14807293bc4bee",
+    "tokenizer": "518667fa1688200ee359e204d4394d083ac3b0940e9f6f9cb7b8d869fca6bebb"
+  },
+  "ready_for_chat": false,
+  "note": "NLL is next-token prediction loss, not conversational quality. Evaluate chat separately.",
+  "run_kind": "infrastructure smoke test, not completed language training",
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 8 GB",
+  "training_time_budget_seconds": 60,
+  "unique_train_stream_tokens": 1000000,
+  "validation_stream_tokens": 114315,
+  "token_count_note": "5931008 are sampled training-token visits, including repeats; not unique corpus tokens",
+  "dataset": "First 1000000 tokens from the train split of pinned Russian Wikimedia Wikipedia; disjoint validation documents",
+  "dataset_revision": "b04c8d1ceb2f5cd4588862100d08de323dccfbaa",
+  "export_parity": "passed atol=1e-3 rtol=1e-3",
+  "full_corpus_status": "Document splitting and tokenizer complete; full tokenization intentionally stopped for short-check scope",
+  "deployed": false
+}

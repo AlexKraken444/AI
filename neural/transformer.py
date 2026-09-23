@@ -16,6 +16,27 @@ def softmax(x):
     return exp / exp.sum(axis=-1, keepdims=True)
 
 
+def select_token(scores, rng, temperature=0., top_p=.9):
+    """Greedy or nucleus sampling; returns token and untempered probability.
+
+    Probability describes the model's prediction, not truth or answer quality.
+    """
+    if not math.isfinite(temperature) or temperature < 0 or not 0 < top_p <= 1:
+        raise ValueError("Invalid temperature/top_p")
+    raw = softmax(scores)
+    if temperature == 0:
+        token = int(raw.argmax())
+    else:
+        distribution = softmax(scores.astype(np.float64) / temperature)
+        order = np.argsort(-distribution, kind="stable")
+        cumulative = np.cumsum(distribution[order])
+        size = min(len(order), int(np.searchsorted(cumulative, top_p)) + 1)
+        candidates = order[:size]
+        weights = distribution[candidates]
+        token = int(rng.choice(candidates, p=weights / weights.sum()))
+    return token, float(raw[token])
+
+
 class Transformer:
     def __init__(self, directory=None):
         root = Path(directory) if directory else Path(__file__).parent / "checkpoint"
@@ -61,7 +82,13 @@ class Transformer:
         logits = hidden @ self.weights["head.weight"].T
         return logits, next_cache, hidden
 
-    def generate_events(self, messages, memory="", max_tokens=128, time_limit=12):
+    def generate_events(self, messages, memory="", max_tokens=128, time_limit=12,
+                        temperature=0., top_p=.9, seed=None):
+        if not 1 <= max_tokens <= self.config["context"] - 16:
+            raise ValueError("Invalid output token budget")
+        if not math.isfinite(temperature) or temperature < 0 or not 0 < top_p <= 1:
+            raise ValueError("Invalid temperature/top_p")
+        rng = np.random.default_rng(seed)
         ids = prompt_tokens(self.tokenizer, messages, memory, limit=self.config["context"] - max_tokens)
         logits, cache, _ = self.forward(ids)
         output, probabilities = [], []
@@ -78,21 +105,21 @@ class Transformer:
                 for i in range(len(output) - 2):
                     if output[i:i + 2] == output[-2:]:
                         scores[output[i + 2]] = -1e9
-            distribution = softmax(scores)
-            token = int(distribution.argmax())
+            token, probability = select_token(scores, rng, temperature, top_p)
             if token == END:
                 finish_reason = "end"
                 break
             output.append(token)
-            probabilities.append(float(distribution[token]))
+            probabilities.append(probability)
             yield {"type": "token", "text": self.tokenizer.decode([token])}
             logits, cache, _ = self.forward([token], cache)
         yield {"type": "generation_done", "tokens": len(output), "finish_reason": finish_reason,
                "mean_probability": sum(probabilities) / max(1, len(probabilities)), "context_tokens": len(ids)}
 
-    def generate(self, messages, memory="", max_tokens=128, time_limit=12):
+    def generate(self, messages, memory="", max_tokens=128, time_limit=12,
+                 temperature=0., top_p=.9, seed=None):
         text, metadata = "", {}
-        for event in self.generate_events(messages, memory, max_tokens, time_limit):
+        for event in self.generate_events(messages, memory, max_tokens, time_limit, temperature, top_p, seed):
             if event["type"] == "token":
                 text += event["text"]
             else:

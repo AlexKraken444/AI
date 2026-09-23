@@ -33,10 +33,8 @@ class Block(nn.Module):
         q, k, v = self.qkv(self.norm1(x)).chunk(3, dim=-1)
         q, k, v = [item.reshape(b, t, self.heads, d // self.heads).transpose(1, 2) for item in (q, k, v)]
         # Explicit causal self-attention; no pretrained architecture or weights.
-        scores = q @ k.transpose(-2, -1) / math.sqrt(d // self.heads)
-        mask = torch.ones(t, t, device=x.device, dtype=torch.bool).triu(1)
-        weights = F.softmax(scores.masked_fill(mask, float("-inf")), dim=-1)
-        attended = (weights @ v).transpose(1, 2).reshape(b, t, d)
+        attended = F.scaled_dot_product_attention(q, k, v, is_causal=True)
+        attended = attended.transpose(1, 2).reshape(b, t, d)
         x = x + self.projection(attended)
         return x + self.ff2(F.gelu(self.ff1(self.norm2(x)), approximate="tanh"))
 
