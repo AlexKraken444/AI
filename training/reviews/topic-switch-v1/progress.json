@@ -1,0 +1,72 @@
+{
+  "stage": "sft",
+  "device": "cuda",
+  "parameters": 15363840,
+  "step": 2000,
+  "planned_steps": 2000,
+  "tokens": 2615828,
+  "best_validation_nll": 2.2257080009995267,
+  "history": [
+    {
+      "step": 0,
+      "validation_nll": 2.3540643736584803
+    },
+    {
+      "step": 250,
+      "validation_nll": 2.2941237351851442,
+      "train_nll": 1.8955972492694855,
+      "tokens": 327585
+    },
+    {
+      "step": 500,
+      "validation_nll": 2.270864274072796,
+      "train_nll": 1.9172996878623962,
+      "tokens": 650574
+    },
+    {
+      "step": 750,
+      "validation_nll": 2.2582309619002547,
+      "train_nll": 1.8977231085300446,
+      "tokens": 978630
+    },
+    {
+      "step": 1000,
+      "validation_nll": 2.248605772717614,
+      "train_nll": 1.8839824795722961,
+      "tokens": 1303705
+    },
+    {
+      "step": 1250,
+      "validation_nll": 2.2393097614209414,
+      "train_nll": 2.000464677810669,
+      "tokens": 1635167
+    },
+    {
+      "step": 1500,
+      "validation_nll": 2.234795923654585,
+      "train_nll": 1.9554961919784546,
+      "tokens": 1965342
+    },
+    {
+      "step": 1750,
+      "validation_nll": 2.228341006224914,
+      "train_nll": 1.8881730139255524,
+      "tokens": 2293019
+    },
+    {
+      "step": 2000,
+      "validation_nll": 2.2257080009995267,
+      "train_nll": 1.9686823189258575,
+      "tokens": 2615828
+    }
+  ],
+  "session_training_seconds": 178.77,
+  "data": {
+    "train": "c1e007b06b2e1d3d2eda927f2dc3c5a68f59e6fca1766840b01024008b774dc8",
+    "validation": "11831f304d4c4a71580072b541ad0598376b3667c0bc23494588b6ba755e44a4",
+    "tokenizer": "518667fa1688200ee359e204d4394d083ac3b0940e9f6f9cb7b8d869fca6bebb",
+    "initial_weights": "2df0848999784bba0d1aca92f84fb7062c7392fe721ef6cd3ce0fd9dce7dbc39"
+  },
+  "ready_for_chat": false,
+  "note": "NLL is next-token prediction loss, not conversational quality. Evaluate chat separately."
+}

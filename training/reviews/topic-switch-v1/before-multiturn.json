@@ -1,0 +1,85 @@
+{
+  "model": {
+    "version": "kraken-context-4",
+    "width": 384,
+    "layers": 6,
+    "heads": 6,
+    "context": 512,
+    "vocabulary": 8192,
+    "seed": 43,
+    "parameters": 15363840
+  },
+  "requires_human_review": true,
+  "scenarios": [
+    [
+      {
+        "question": "Привет, как дела?",
+        "text": "Привет! Всё хорошо, готов помочь. Как у тебя дела?",
+        "tokens": 17,
+        "finish_reason": "end",
+        "mean_probability": 0.9982223966542412,
+        "context_tokens": 10
+      },
+      {
+        "question": "Что такое Python?",
+        "text": "Привет! Всё хорошо, готов помочь. Как у тебя дела?",
+        "tokens": 17,
+        "finish_reason": "end",
+        "mean_probability": 0.9436872426201316,
+        "context_tokens": 40
+      },
+      {
+        "question": "Теперь другая тема: столица Франции?",
+        "text": "Привет! Всё хорошо, готов помочь. Как у тебя дела?",
+        "tokens": 17,
+        "finish_reason": "end",
+        "mean_probability": 0.8510589476893929,
+        "context_tokens": 71
+      }
+    ],
+    [
+      {
+        "question": "Кошка сидит под столом. Где кошка?",
+        "text": "Сегодня сидит на улице, пока кошка не станет золотистым.",
+        "tokens": 22,
+        "finish_reason": "end",
+        "mean_probability": 0.5173936137421564,
+        "context_tokens": 18
+      },
+      {
+        "question": "Теперь кошка вышла во двор. Где она теперь?",
+        "text": "Молодая кошка любит играть в футбол. Она любила играть с ним, и она всегда пришла ему. Она всегда принесла ее домой. Она очень любим, и мне нравится, как она всегда будет наполнена ее красотой.",
+        "tokens": 68,
+        "finish_reason": "end",
+        "mean_probability": 0.4362171107683988,
+        "context_tokens": 58
+      }
+    ],
+    [
+      {
+        "question": "Меня зовут Алекс.",
+        "text": "Алекс - Алекс \"Меня зовут Джон\".",
+        "tokens": 18,
+        "finish_reason": "end",
+        "mean_probability": 0.5589939823581113,
+        "context_tokens": 13
+      },
+      {
+        "question": "Как меня зовут?",
+        "text": "Алекс - Алекс \"Меня зовут Джон\".",
+        "tokens": 18,
+        "finish_reason": "end",
+        "mean_probability": 0.7976582927836312,
+        "context_tokens": 41
+      },
+      {
+        "question": "Сколько будет 2+2?",
+        "text": "Алекс - Алекс \"Меня зовут Джон\".",
+        "tokens": 18,
+        "finish_reason": "end",
+        "mean_probability": 0.7849098294973373,
+        "context_tokens": 71
+      }
+    ]
+  ]
+}

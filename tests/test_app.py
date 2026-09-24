@@ -108,6 +108,12 @@ class HTTPTests(unittest.TestCase):
         self.assertEqual(events[-1]["model"], "Kraken Context 4")
         self.assertEqual("".join(e["text"] for e in events if e["type"] == "token"), "2+2 = 4")
 
+    def test_pretrained_and_browser_modes_are_disabled(self):
+        for mode in ("local", "browser", "browser-small"):
+            payload = json.dumps({"mode": mode, "messages": [{"role": "user", "content": "Привет"}]}).encode()
+            code, _, _ = self.request("POST", "/api/chat", payload, {"Content-Type": "application/json"})
+            self.assertEqual(code, 400)
+
     def test_invalid_requests(self):
         self.assertEqual(self.request("POST", "/api/chat", b"{")[0], 415)
         self.assertEqual(self.request("POST", "/api/chat", b"{", {"Content-Type": "application/json"})[0], 400)
