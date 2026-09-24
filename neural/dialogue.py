@@ -29,6 +29,12 @@ def text_events(answer, route, model="Kraken Context 4"):
 def reply_events(messages, personality, memory, mode="context4"):
     text = messages[-1]["content"].strip()
     model_name = {"context4": "Kraken Context 4", "context3": "Kraken Context 3", "context": "Kraken Context 2", "reference": "Kraken Mini"}[mode]
+    from neural.facts import fact_reply
+    verified = fact_reply(text)
+    if verified:
+        yield {"type": "status", "text": "Проверяю справочные факты с учётом очевидных опечаток. Это отдельный справочный обработчик."}
+        yield from text_events(verified, "verified_reference", model_name + " · справка")
+        return
     yield {"type": "status", "text": "Проверяю доступный контекст и сохранённую память."}
     recalled = memory_reply(text, memory)
     if recalled:
