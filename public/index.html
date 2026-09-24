@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#141614">
-  <meta name="description" content="Kraken — разговорный ИИ с открытой моделью Qwen3 на собственном GPU и памятью диалогов.">
+  <meta name="description" content="Kraken — чат с собственной небольшой нейросетью на Python. Без внешних AI API, с открытым кодом и характером.">
   <title>Kraken — пространство для диалога</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/style.css">
@@ -22,7 +22,7 @@
       <div class="history-label">ВАШИ ДИАЛОГИ <span id="chat-count">0</span></div>
       <nav id="history" class="history" aria-label="Сохранённые диалоги"></nav>
       <div class="sidebar-bottom">
-        <div class="local-note"><span class="small-star">✳</span><div>Открытая модель.<br><strong>Свой характер.</strong><p>Работает на своём GPU</p></div></div>
+        <div class="local-note"><span class="small-star">✳</span><div>Маленькая модель.<br><strong>Свой характер.</strong><p>Создана с нуля на Python</p></div></div>
         <button class="about-button memory-button" id="memory-button"><span>◈</span> Память <span id="memory-count" class="arrow">0</span></button>
         <button class="about-button" id="about-button"><span>ⓘ</span> О модели <span class="arrow">↗</span></button>
         <div class="profile"><div class="avatar">ВЫ</div><div>Личное пространство<span>История в этом браузере</span></div><span class="online-dot"></span></div>
@@ -30,7 +30,7 @@
     </aside>
     <main>
       <header class="topbar">
-        <div class="topbar-left"><button id="menu-button" class="icon-button menu-button" aria-label="Открыть меню" aria-expanded="false">☰</button><button class="model-selector" id="model-button">Kraken <span id="model-version">Qwen3 4B</span><span class="chevron">⌄</span></button><span class="model-badge">ОТКРЫТАЯ МОДЕЛЬ · GPU</span></div>
+        <div class="topbar-left"><button id="menu-button" class="icon-button menu-button" aria-label="Открыть меню" aria-expanded="false">☰</button><button class="model-selector" id="model-button">Kraken <span id="model-version">Context 4</span><span class="chevron">⌄</span></button><span class="model-badge">СОБСТВЕННЫЙ TRANSFORMER</span></div>
         <a class="source-link" href="https://github.com/AlexKraken444/AI" target="_blank" rel="noopener noreferrer">Открытый код <span>↗</span></a>
       </header>
       <div class="scroll-area" id="scroll-area">
@@ -45,7 +45,7 @@
             <button class="suggestion" data-prompt="Составь план изучения Python"><span class="suggestion-icon">⌘</span><strong>С чего-нибудь начать</strong><span>План обучения на неделю</span><i>↗</i></button>
             <button class="suggestion" data-prompt="Расскажи шутку"><span class="suggestion-icon">☺</span><strong>Добавить лёгкости</strong><span>Мне нужна хорошая шутка</span><i>↗</i></button>
           </div>
-          <div class="welcome-note"><span>↳</span> Qwen3 на собственном GPU. Может ошибаться — проверяй важные ответы.</div>
+          <div class="welcome-note"><span>↳</span> Context 4 — экспериментальная модель. Может отвечать неверно и терять смысл вопроса.</div>
         </section>
         <section class="messages" id="messages" aria-label="Сообщения диалога" hidden></section>
       </div>
@@ -61,14 +61,15 @@
     </main>
   </div>
   <dialog id="about-dialog">
-    <div class="dialog-top"><span class="dialog-eyebrow">KRAKEN · QWEN3</span><button class="icon-button" id="close-about" aria-label="Закрыть">×</button></div>
-    <h2>Открытая модель.<br>Твой GPU.</h2>
-    <p>За разговор отвечает открытая обученная модель Qwen3 4B. Она генерирует ответ по вероятностям следующих токенов, учитывая последний вопрос и доступную историю. Веса Qwen созданы авторами модели, а не обучены нами с нуля.</p>
-    <div class="model-stats"><div><strong>4 млрд</strong><span>Параметров модели</span></div><div><strong>GPU</strong><span>Сервер владельца</span></div><div><strong>0</strong><span>Платных AI API</span></div></div>
+    <div class="dialog-top"><span class="dialog-eyebrow">KRAKEN CONTEXT 4</span><button class="icon-button" id="close-about" aria-label="Закрыть">×</button></div>
+    <h2>Нейросеть с нуля.<br>Без притворства.</h2>
+    <p>Context 4 — собственный Transformer с 15,36 млн параметров, обученный с нуля. На каждом шаге он вычисляет вероятности следующих токенов с учётом доступной истории.</p>
+    <div class="model-stats"><div><strong>6 × 6</strong><span>Слои × головы внимания</span></div><div><strong>512</strong><span>Токенов контекста и ответа</span></div><div><strong>0</strong><span>Внешних AI API</span></div></div>
     <label class="mode-label" for="model-mode">Режим ответа</label>
-    <select id="model-mode"><option value="local">Qwen3 4B — разговорная модель на GPU</option><option value="context4">Context 4 — архивный эксперимент</option><option value="context3">Context 3 — архивный эксперимент</option><option value="context">Context 2 — архивный эксперимент</option><option value="reference">Mini 1 — справочные ответы</option></select>
-    <p>Для разговора компьютер владельца, GPU-сервер и защищённое подключение должны быть включены. История помогает отвечать на уточнения, а при смене темы модель получает новый вопрос последним.</p>
-    <p>Память добавляет подходящие записи из прошлых чатов. Серые сообщения показывают этапы обработки, а не скрытые мысли. Прежние модели, обученные с нуля, сохранены как эксперименты; их ответы часто бессвязны.</p>
+    <select id="model-mode"><option value="context4">Context 4 — новая модель (эксперимент)</option><option value="context3">Context 3 — прежний эксперимент</option><option value="context">Context 2 — прежняя модель</option><option value="reference">Mini 1 — справочные ответы</option></select>
+    <p>Сначала модель училась предсказывать русский текст Wikipedia, затем — ответы на учебные вопросы. Использованы RuTurboAlpaca, OpenAssistant и авторские разговорные примеры; часть корпуса синтетическая. Готовые веса не загружались.</p>
+    <p>Обучение ограничено примерно 30 минутами на GPU. Простые реплики улучшились, но свободная речь и фактические ответы остаются ненадёжными. Это не уровень ChatGPT. Mini — отдельный справочный режим с подготовленными ответами.</p>
+    <p>Память находит полезные факты и сообщения из прошлых чатов. Точное извлечение фактов из памяти и калькулятор работают отдельными программными обработчиками. Серые реплики показывают этапы работы, а не скрытые мысли.</p>
     <p class="privacy-note">История и память хранятся в этом браузере. Выбранные фрагменты передаются серверу для ответа; веса модели на переписке не обновляются. Синхронизации между устройствами нет.</p>
     <a class="dialog-link" href="https://github.com/AlexKraken444/AI" target="_blank" rel="noopener noreferrer">Посмотреть код и обучение <span>↗</span></a>
   </dialog>

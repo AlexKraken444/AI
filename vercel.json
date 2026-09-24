@@ -5,9 +5,9 @@
   "outputDirectory": "public",
   "functions": {
     "api/chat.py": {
-      "maxDuration": 60,
+      "maxDuration": 30,
       "includeFiles": "neural/**",
-      "excludeFiles": "{.local-runtime/**,.local-models/**,.gpu-state/**,scripts/**,.training-libs/**,training-data/**,training-output/**,training/**,tests/**,train.py,train_transformer.py}"
+      "excludeFiles": "{.training-libs/**,training-data/**,training-output/**,training/**,tests/**,train.py,train_transformer.py}"
     }
   },
   "headers": [{

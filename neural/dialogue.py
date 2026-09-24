@@ -26,11 +26,7 @@ def text_events(answer, route, model="Kraken Context 4"):
     yield {"type": "done", "model": model, "route": route, "finish_reason": "end"}
 
 
-def reply_events(messages, personality, memory, mode="local"):
-    if mode == "local":
-        from neural.local_llm import reply_events as gpu_reply
-        yield from gpu_reply(messages, personality, memory)
-        return
+def reply_events(messages, personality, memory, mode="context4"):
     text = messages[-1]["content"].strip()
     model_name = {"context4": "Kraken Context 4", "context3": "Kraken Context 3", "context": "Kraken Context 2", "reference": "Kraken Mini"}[mode]
     yield {"type": "status", "text": "Проверяю доступный контекст и сохранённую память."}

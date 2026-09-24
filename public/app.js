@@ -192,7 +192,7 @@ function updateControls() {
   $("#model-mode").value = modelMode;
   $("#memory-count").textContent = memory.enabled ? memory.facts.length : "выкл.";
   $("#memory-shortcut").textContent = memory.enabled ? `◈ Память · ${memory.facts.length}` : "◈ Память выключена";
-  $("#connection-status").textContent = pending ? "Kraken обрабатывает запрос…" : "Qwen3 на собственном GPU";
+  $("#connection-status").textContent = pending ? "Kraken обрабатывает запрос…" : "Без внешних AI API";
 }
 
 function stop() {
@@ -216,7 +216,7 @@ async function requestReply(chat) {
   chat.messages.push(message); pending = job;
   render(); save();
   let timedOut = false, completed = false;
-  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, 60000);
+  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, 30000);
   try {
     const response = await fetch("/api/chat", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(payload), signal: controller.signal});
     if (!response.ok) {
@@ -249,7 +249,7 @@ async function requestReply(chat) {
     $("#announcer").textContent = "Kraken ответил: " + message.content;
   } catch (error) {
     if (error.name === "AbortError" && !timedOut) message.state = "stopped";
-    else { message.state = "error"; message.error = timedOut ? "Сервер не ответил за 60 секунд. Попробуйте ещё раз." : error.message === "Failed to fetch" ? "Не удалось связаться с сервером. Проверьте интернет и повторите запрос." : error.message; }
+    else { message.state = "error"; message.error = timedOut ? "Сервер не ответил за 30 секунд. Попробуйте ещё раз." : error.message === "Failed to fetch" ? "Не удалось связаться с сервером. Проверьте интернет и повторите запрос." : error.message; }
   } finally {
     clearTimeout(timer);
     if (pending === job) pending = null;

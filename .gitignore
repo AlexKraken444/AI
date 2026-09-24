@@ -13,3 +13,5 @@ training-data/
 .local-runtime/
 .local-models/
 .gpu-state/
+public/browser-worker.js
+public/browser-worker.js.LEGAL.txt
