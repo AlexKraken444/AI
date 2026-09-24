@@ -90,7 +90,7 @@ class HTTPTests(unittest.TestCase):
         return result
 
     def test_stream_contract(self):
-        payload = json.dumps({"messages": [{"role": "user", "content": "Посчитай 2+2"}]}).encode()
+        payload = json.dumps({"mode": "context4", "messages": [{"role": "user", "content": "Посчитай 2+2"}]}).encode()
         code, body, headers = self.request("POST", "/api/chat", payload, {"Content-Type": "application/json"})
         self.assertEqual(code, 200)
         self.assertIn("application/x-ndjson", headers["Content-Type"])
@@ -98,8 +98,8 @@ class HTTPTests(unittest.TestCase):
         self.assertEqual(events[0]["type"], "status")
         self.assertEqual(events[-1]["type"], "done")
 
-    def test_new_default_model_and_suffix_calculation(self):
-        payload = json.dumps({"messages": [{"role": "user", "content": "2+2 Сколько"}]}).encode()
+    def test_archived_model_and_suffix_calculation(self):
+        payload = json.dumps({"mode": "context4", "messages": [{"role": "user", "content": "2+2 Сколько"}]}).encode()
         code, body, _ = self.request("POST", "/api/chat", payload, {"Content-Type": "application/json"})
         self.assertEqual(code, 200)
         events = [json.loads(line) for line in body.splitlines()]

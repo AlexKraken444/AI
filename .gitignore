@@ -10,3 +10,6 @@ test-results/
 .training-libs/
 training-output/
 training-data/
+.local-runtime/
+.local-models/
+.gpu-state/

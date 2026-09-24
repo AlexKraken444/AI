@@ -1,0 +1,10 @@
+.local-runtime/
+.local-models/
+.gpu-state/
+.training-libs/
+training-data/
+training-output/
+.env*
+training/
+tests/
+__pycache__/

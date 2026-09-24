@@ -5,7 +5,9 @@ import numpy as np
 from neural.transformer import Transformer
 from neural.tokenizer import Tokenizer, prompt_tokens, USER, ASSISTANT, MEMORY, END
 from neural.memory import validate_memory, memory_reply, memory_context
-from neural.dialogue import reply_events
+from neural.dialogue import reply_events as _reply_events
+def reply_events(messages, personality, memory, mode="context4"):
+    return _reply_events(messages, personality, memory, mode)
 
 
 class TransformerTests(unittest.TestCase):

@@ -1,0 +1,57 @@
+[
+  {
+    "question": "Привет как дела?",
+    "answer": "Привет! У меня всё хорошо, спасибо. Как у тебя?",
+    "seconds": 1.92,
+    "final": {
+      "type": "done",
+      "model": "Qwen3 4B · GPU",
+      "route": "local_llm",
+      "finish_reason": "stop"
+    }
+  },
+  {
+    "question": "Объясни, что такое Python, в двух предложениях.",
+    "answer": "Python — это популярный язык программирования, который позволяет создавать веб-приложения, анализировать данные, автоматизировать задачи и многое другое. Он известен простотой синтаксиса и широким сообществом разработчиков.",
+    "seconds": 7.19,
+    "final": {
+      "type": "done",
+      "model": "Qwen3 4B · GPU",
+      "route": "local_llm",
+      "finish_reason": "stop"
+    }
+  },
+  {
+    "question": "Теперь другая тема: какая столица Франции?",
+    "answer": "Париж. Это столица и главный город Франции.",
+    "seconds": 2.83,
+    "final": {
+      "type": "done",
+      "model": "Qwen3 4B · GPU",
+      "route": "local_llm",
+      "finish_reason": "stop"
+    }
+  },
+  {
+    "question": "А какой язык там основной?",
+    "answer": "Французский. Он является официальным языком страны и широко используется в образовании, медиа и повседневной жизни.",
+    "seconds": 4.86,
+    "final": {
+      "type": "done",
+      "model": "Qwen3 4B · GPU",
+      "route": "local_llm",
+      "finish_reason": "stop"
+    }
+  },
+  {
+    "question": "2+2 Сколько",
+    "answer": "4.",
+    "seconds": 0.5,
+    "final": {
+      "type": "done",
+      "model": "Qwen3 4B · GPU",
+      "route": "local_llm",
+      "finish_reason": "stop"
+    }
+  }
+]
